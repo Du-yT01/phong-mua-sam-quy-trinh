@@ -25,12 +25,13 @@
     color:var(--ink);
     -webkit-font-smoothing:antialiased;
   }
-  .wrap{max-width:1300px;margin:0 auto;padding:36px 24px 56px}
-  header{display:grid;grid-template-columns:1fr auto;gap:24px;align-items:end;margin-bottom:22px}
-  h1{margin:0 0 8px;font-size:30px;line-height:1.15;font-weight:800;letter-spacing:-.02em}
-  .lead{margin:0;color:var(--muted);font-size:15px;line-height:1.55;max-width:62ch}
-  .counts{display:flex;gap:22px;font-size:13px;color:var(--muted)}
-  .counts b{display:block;font-size:26px;font-weight:800;color:var(--ink);line-height:1.1;font-variant-numeric:tabular-nums}
+  .wrap{padding:20px 24px 32px}
+  header{grid-column:1;grid-row:1;width:0;min-width:100%;display:flex;justify-content:space-between;align-items:flex-end;gap:24px}
+  h1{margin:0 0 4px;white-space:nowrap;font-size:clamp(20px,1.7vw,26px);line-height:1.15;font-weight:800;letter-spacing:-.02em}
+  .lead{margin:0;color:var(--muted);font-size:clamp(13px,1vw,15px);line-height:1.55;max-width:62ch}
+  .counts{display:flex;gap:22px;font-size:13px;color:var(--muted);flex:none;white-space:nowrap}
+  header > div:first-child{min-width:0}
+  .counts b{display:block;font-size:22px;font-weight:800;color:var(--ink);line-height:1.1;font-variant-numeric:tabular-nums}
 
   .board{
     background:rgba(255,255,255,.82);
@@ -38,12 +39,19 @@
     box-shadow:0 1px 0 #fff inset,0 18px 40px -24px rgba(22,38,58,.35);
     padding:10px 10px 4px;overflow-x:auto;
   }
-  svg#flow{display:block;width:100%;min-width:980px;height:auto;font-family:inherit}
+  .board{grid-column:1;grid-row:2}
+  svg#flow{
+    display:block;font-family:inherit;width:auto;aspect-ratio:1390/1008;
+    height:min(calc(100vh - 150px), calc((100vw - 400px) * 1008 / 1390));
+    min-height:520px;
+  }
+  /* Sơ đồ + ghi chú gom thành một khối, căn giữa màn hình */
+  .layout{display:grid;grid-template-columns:auto 270px;grid-template-rows:auto auto;gap:14px 16px;justify-content:center;align-items:start}
 
-  .bottom{display:grid;grid-template-columns:1fr 1.1fr;gap:16px;margin-top:16px}
+  .side{grid-column:2;grid-row:2;display:flex;flex-direction:column;gap:14px;position:sticky;top:16px}
   .legend,.info{background:rgba(255,255,255,.82);border:1px solid var(--line);border-radius:16px;padding:14px 18px}
   .legend h2,.info h2{margin:0 0 10px;font-size:13px;font-weight:700;color:var(--ink)}
-  .legend ul{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px 18px;font-size:13px;color:#334155}
+  .legend ul{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:1fr;gap:9px;font-size:13px;color:#334155}
   .legend li{display:flex;align-items:center;gap:10px}
   .sw{flex:none;width:30px;height:16px;border-radius:5px;border:1.5px solid}
   .sw.svc{background:#fff;border-color:#cbd5e1;box-shadow:inset 0 3px 0 #0284c7}
@@ -55,7 +63,7 @@
   .sw.link::after{content:"↗";position:absolute;inset:0;display:grid;place-items:center;font-size:11px;color:#64748b;line-height:1}
   .sw.report{background:linear-gradient(135deg,#123047,#0f5a4c);border-color:#0f5a4c}
   .info{border-left:5px solid var(--accent,#94a3b8);transition:border-color .25s}
-  .info p{margin:0;font-size:14px;line-height:1.55;color:#334155;min-height:44px}
+  .info p{margin:0;font-size:14px;line-height:1.55;color:#334155;min-height:66px}
   .info .hint{color:var(--soft)}
 
   /* SVG */
@@ -81,33 +89,42 @@
   @keyframes dash{to{stroke-dashoffset:-16}}
   @media (prefers-reduced-motion:reduce){.flow{animation:none}}
 
+  @media (max-width:1100px){
+    .layout{grid-template-columns:minmax(0,1fr);justify-content:stretch}
+    header{width:auto;flex-wrap:wrap}
+    .side{grid-column:1;grid-row:3;position:static;display:grid;grid-template-columns:1fr 1fr}
+    svg#flow{width:100%;min-width:900px;height:auto;min-height:0}
+  }
   @media (max-width:760px){
-    header{grid-template-columns:1fr}
-    .bottom{grid-template-columns:1fr}
-    .legend ul{grid-template-columns:1fr}
+    .side{grid-template-columns:1fr}
     h1{font-size:24px}
   }
 </style>
 </head>
 <body>
 <div class="wrap">
+
+  <div class="layout">
   <header>
     <div>
       <h1>Luồng dữ liệu báo cáo mua sắm & dự án</h1>
-      <p class="lead">Dữ liệu đi từ các quy trình trên phần mềm Service, được lưu thành 4 bảng và hợp lại thành một báo cáo tổng hợp. Di chuột vào một khối để làm nổi bật đường đi của nhánh đó.</p>
+      <p class="lead">Từ phần mềm Service, qua kho dữ liệu, ra báo cáo. Di chuột vào một khối để làm nổi bật nhánh của nó.</p>
     </div>
     <div class="counts">
       <div><b>4</b>quy trình Service</div>
       <div><b>4</b>bảng dữ liệu</div>
-      <div><b>1</b>báo cáo tổng hợp</div>
+      <div><b>2</b>báo cáo tổng hợp</div>
     </div>
   </header>
-
   <div class="board">
-    <svg id="flow" viewBox="0 0 1290 960" role="img" aria-label="Sơ đồ luồng dữ liệu từ phần mềm Service đến báo cáo tổng hợp"></svg>
+    <svg id="flow" viewBox="-100 0 1390 1008" role="img" aria-label="Sơ đồ luồng dữ liệu từ phần mềm Service đến báo cáo tổng hợp"></svg>
   </div>
 
-  <div class="bottom">
+  <aside class="side">
+    <section class="info" id="info">
+      <h2 id="info-title">Chi tiết</h2>
+      <p id="info-text" class="hint">Di chuột hoặc chạm vào một khối trên sơ đồ.</p>
+    </section>
     <section class="legend">
       <h2>Chú thích</h2>
       <ul>
@@ -120,10 +137,7 @@
         <li><span class="sw link"></span>Bấm để mở link</li>
       </ul>
     </section>
-    <section class="info" id="info">
-      <h2 id="info-title">Chi tiết</h2>
-      <p id="info-text" class="hint">Di chuột hoặc chạm vào một khối trên sơ đồ.</p>
-    </section>
+  </aside>
   </div>
 </div>
 
@@ -160,7 +174,35 @@
     el('path', {d:'M0,0.5 L10,5 L0,9.5 Z', fill:c}, m);
   });
 
-  const L = { edges: el('g'), nodes: el('g') };
+  const L = { tiers: el('g'), edges: el('g'), nodes: el('g') };
+
+  /* ---------- 3 tầng ---------- */
+  const TIERS = [
+    {n:'1', name:'Khối vận hành',     sub:'Phần mềm Service & thu thập', y0:12,  y1:352, c:'#2563eb'},
+    {n:'2', name:'Kho dữ liệu',       sub:'Dữ liệu & bảng tổng hợp',     y0:364, y1:834, c:'#0f766e'},
+    {n:'3', name:'Báo cáo đầu ra',    sub:'Raw & Dashboard',             y0:846, y1:1000, c:'#b45309'}
+  ];
+  TIERS.forEach(t=>{
+    const h = t.y1 - t.y0, g = el('g', {}, L.tiers);
+    el('rect', {x:-92, y:t.y0, width:1372, height:h, rx:18, fill:t.c, 'fill-opacity':.035, stroke:t.c, 'stroke-opacity':.22, 'stroke-width':1.2}, g);
+    el('rect', {x:-92, y:t.y0, width:62, height:h, rx:18, fill:t.c, 'fill-opacity':.1}, g);
+    el('rect', {x:-40, y:t.y0, width:10, height:h, fill:t.c, 'fill-opacity':.1}, g);   // vuông mép phải dải nhãn
+    el('line', {x1:-30, x2:-30, y1:t.y0, y2:t.y1, stroke:t.c, 'stroke-opacity':.25}, g);
+    el('circle', {cx:-61, cy:t.y0+28, r:14, fill:t.c}, g);
+    el('text', {x:-61, y:t.y0+33, 'text-anchor':'middle', fill:'#fff', style:'font-size:14px;font-weight:800'}, g, t.n);
+    const my = t.y0 + 28 + (h-28)/2;
+    const lbl = el('text', {x:-61, y:my, 'text-anchor':'middle', transform:`rotate(-90 -61 ${my})`}, g);
+    el('tspan', {x:-61, dy:'-2', fill:t.c, style:'font-size:14px;font-weight:800'}, lbl, t.name);
+    if (h > 200) el('tspan', {x:-61, dy:'17', fill:'#64748b', style:'font-size:11px;font-weight:500'}, lbl, t.sub);
+    // Giữ nhãn dọc không đè lên số thứ tự và không tràn khỏi tầng
+    const len = lbl.getBBox().width, startY = t.y0 + 50, endY = t.y1 - 10;
+    if (len > endY - startY) lbl.firstChild.style.fontSize = (14 * (endY - startY) / len).toFixed(1) + 'px';
+    const fit = Math.min(len, endY - startY);
+    const cy = Math.max(my, startY + fit/2);
+    lbl.setAttribute('y', cy);
+    lbl.querySelectorAll('tspan').forEach(ts=>ts.setAttribute('x', -61));
+    lbl.setAttribute('transform', `rotate(-90 -61 ${cy})`);
+  });
 
   /* ---------- nodes (giữ bố cục như sơ đồ gốc) ---------- */
   const nodes = {
