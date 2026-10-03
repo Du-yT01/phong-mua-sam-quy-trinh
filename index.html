@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Luồng dữ liệu – Báo cáo quản trị mua sắm & dự án</title>
+<title>Sơ đồ luồng dữ liệu</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
@@ -41,8 +41,8 @@
   }
   .board{grid-column:1;grid-row:2}
   svg#flow{
-    display:block;font-family:inherit;width:auto;aspect-ratio:1390/1008;
-    height:min(calc(100vh - 150px), calc((100vw - 400px) * 1008 / 1390));
+    display:block;font-family:inherit;width:auto;aspect-ratio:var(--aspect, 1.38);
+    height:min(calc(100vh - 150px), calc((100vw - 400px) * var(--ratio, .725)));
     min-height:520px;
   }
   /* Sơ đồ + ghi chú gom thành một khối, căn giữa màn hình */
@@ -53,9 +53,14 @@
   .legend h2,.info h2{margin:0 0 10px;font-size:13px;font-weight:700;color:var(--ink)}
   .legend ul{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:1fr;gap:9px;font-size:13px;color:#334155}
   .legend li{display:flex;align-items:center;gap:10px}
+  .dept-list li{cursor:pointer;border-radius:8px;padding:3px 6px;margin:0 -6px;transition:background .2s}
+  .dept-list li:hover{background:#f1f5f9}
+  .dept-chip{flex:none;width:30px;height:16px;border-radius:5px;border:1.5px solid var(--dc);background:color-mix(in srgb,var(--dc) 14%,#fff);position:relative}
+  .dept-chip::after{content:"";position:absolute;left:5px;top:50%;width:6px;height:6px;margin-top:-3px;border-radius:50%;background:var(--dc)}
+  .dept-list small{color:var(--soft);margin-left:auto;font-size:12px;white-space:nowrap}
   .sw{flex:none;width:30px;height:16px;border-radius:5px;border:1.5px solid}
   .sw.svc{background:#fff;border-color:#cbd5e1;box-shadow:inset 0 3px 0 #0284c7}
-  .sw.manual{background:#fff1f2;border:1.5px dashed #e11d48}
+    .sw.manual{background:#fff1f2;border:1.5px dashed #e11d48}
   .sw.new{background:#e0f2fe;border-color:#0284c7;border-radius:9px}
   .sw.past{background:#f1f5f9;border:1.5px dashed #94a3b8;border-radius:9px}
   .sw.table{background:#fff;border-color:#4f46e5}
@@ -77,6 +82,7 @@
   .n-id{font-size:11px;font-weight:600;fill:#475569;font-variant-numeric:tabular-nums}
   .n-pill{font-size:12px;font-weight:600}
   .n-code{font-size:10.5px;fill:var(--muted)}
+  .n-dept{font-size:12px;font-weight:700}
   .node{cursor:default;outline:none}
   .node.linked{cursor:pointer}
   .node .shape{transition:filter .2s, stroke-width .2s}
@@ -99,52 +105,172 @@
     .side{grid-template-columns:1fr}
     h1{font-size:24px}
   }
+  .sw.out{background:#fff;border-color:#d4a106;border-radius:6px}
 </style>
 </head>
 <body>
 <div class="wrap">
-
   <div class="layout">
-  <header>
-    <div>
-      <h1>Luồng dữ liệu báo cáo mua sắm & dự án</h1>
-      <p class="lead">Từ phần mềm Service, qua kho dữ liệu, ra báo cáo. Di chuột vào một khối để làm nổi bật nhánh của nó.</p>
+    <header>
+      <div>
+        <h1 id="page-title"></h1>
+        <p class="lead" id="page-lead"></p>
+      </div>
+      <div class="counts" id="counts"></div>
+    </header>
+    <div class="board">
+      <svg id="flow" role="img"></svg>
     </div>
-    <div class="counts">
-      <div><b>4</b>quy trình Service</div>
-      <div><b>4</b>bảng dữ liệu</div>
-      <div><b>2</b>báo cáo tổng hợp</div>
-    </div>
-  </header>
-  <div class="board">
-    <svg id="flow" viewBox="-100 0 1390 1008" role="img" aria-label="Sơ đồ luồng dữ liệu từ phần mềm Service đến báo cáo tổng hợp"></svg>
-  </div>
-
-  <aside class="side">
-    <section class="info" id="info">
-      <h2 id="info-title">Chi tiết</h2>
-      <p id="info-text" class="hint">Di chuột hoặc chạm vào một khối trên sơ đồ.</p>
-    </section>
-    <section class="legend">
-      <h2>Chú thích</h2>
-      <ul>
-        <li><span class="sw svc"></span>Quy trình trên phần mềm Service</li>
-        <li><span class="sw manual"></span>Dữ liệu nhập thủ công</li>
-        <li><span class="sw new"></span>Dữ liệu mới, cập nhật định kỳ</li>
-        <li><span class="sw past"></span>Dữ liệu quá khứ (Excel cũ)</li>
-        <li><span class="sw table"></span>Bảng dữ liệu đích</li>
-        <li><span class="sw report"></span>Báo cáo tổng hợp</li>
-        <li><span class="sw link"></span>Bấm để mở link</li>
-      </ul>
-    </section>
-  </aside>
+    <aside class="side">
+      <section class="info" id="info">
+        <h2 id="info-title">Chi tiết</h2>
+        <p id="info-text" class="hint">Di chuột hoặc chạm vào một khối trên sơ đồ.</p>
+      </section>
+      <section class="legend">
+        <h2>Chú thích</h2>
+        <ul id="legend"></ul>
+      </section>
+      <section class="legend" id="dept-box" hidden>
+        <h2>Phòng thực hiện</h2>
+        <ul id="dept-list" class="dept-list"></ul>
+      </section>
+    </aside>
   </div>
 </div>
 
+<!-- =====================================================================
+     CONFIG – PHẦN DUY NHẤT CẦN SỬA KHI VẼ SƠ ĐỒ MỚI
+     Toạ độ x, y là TÂM của node. Trục y đi từ trên xuống.
+     Engine bên dưới không cần sửa.
+     ===================================================================== -->
+<script>
+const CONFIG = {
+  title: 'Luồng dữ liệu báo cáo mua sắm & dự án',
+  lead:  'Từ phần mềm Service, qua kho dữ liệu, ra báo cáo. Di chuột vào một khối để làm nổi bật nhánh của nó.',
+  counts: [[4,'quy trình Service'], [4,'bảng dữ liệu'], [2,'báo cáo tổng hợp']],
+
+  // Vùng vẽ (không tính dải nhãn tầng 100px bên trái, engine tự thêm)
+  width: 1290, height: 1008,
+
+  // Link mặc định cho node type 'service' = serviceBaseUrl + id
+  serviceBaseUrl: 'https://service.base.vn/services/',
+
+  // Mỗi nhánh (lane) một màu, dùng xuyên suốt từ nguồn tới bảng đích
+  lanes: {
+    mcl:      {color:'#0284c7', name:'Vật tư'},
+    detail:   {color:'#4f46e5', name:'Dự án'},
+    logistic: {color:'#ea580c', name:'Logistics'},
+    delivery: {color:'#c026d3', name:'Xuất hàng'}
+  },
+
+  // Màu phòng ban (dùng ở chân thẻ quy trình). Chọn màu KHÁC hẳn màu các nhánh ở trên.
+  departments: {
+    'Phòng Thiết Kế':    '#65a30d',
+    'Ban Quản Lý Dự Án': '#a16207',
+    'Phòng Mua Hàng':    '#0d9488'
+  },
+
+  // Các tầng ngang (đánh số theo thứ tự luồng chảy)
+  tiers: [
+    {name:'Khối vận hành',  sub:'Phần mềm Service & thu thập', y0:12,  y1:352,  color:'#2563eb'},
+    {name:'Kho dữ liệu',    sub:'Dữ liệu & bảng tổng hợp',     y0:364, y1:834,  color:'#0f766e'},
+    {name:'Báo cáo đầu ra', sub:'Raw & Dashboard',             y0:846, y1:1000, color:'#b45309'}
+  ],
+
+  /* Loại node:
+     service : quy trình phần mềm (kicker, title, id, dept = phòng thực hiện) – tự gắn link serviceBaseUrl+id
+               Có dept thì h = 108 (chân thẻ 26px, tô màu theo CONFIG.departments), không có dept thì h = 84
+     pill    : dữ liệu trung gian, variant = 'new' | 'past' | 'manual'
+     sheet   : file / Google Sheets trung gian (title, sub, url?)
+     table   : bảng dữ liệu đích (title, code)
+     report  : khối báo cáo trung tâm (title, sub, chips tự lấy từ bus đổ vào)
+     out     : báo cáo đầu ra có link (title, sub, icon = 'sheet' | 'pbi' | 'doc', url)
+     Mọi node: lane, x, y, w, h, info:[tiêu đề, mô tả], url (tuỳ chọn)              */
+  nodes: {
+    svc_mcl:   {type:'service', lane:'mcl', x:180, y:80, w:212, h:108, kicker:'Phần mềm Service', title:'QT2. Lập và duyệt MPR', id:'8438', dept:'Phòng Thiết Kế',
+                info:['Lập và duyệt MPR','Quy trình 2 trên phần mềm Service (ID 8438). Phiếu đề nghị mua vật tư (MPR) được lập và phê duyệt tại đây.']},
+    mpr:       {type:'pill', variant:'new', lane:'mcl', x:180, y:190, w:110, h:38, label:'MPR',
+                info:['MPR','Phiếu MPR đã duyệt, lấy ra từ quy trình 2.']},
+    manual:    {type:'pill', variant:'manual', lane:'mcl', x:345, y:190, w:140, h:38, label:'✎ Nhập thủ công',
+                info:['Nhập thủ công','Thông tin bổ sung do người dùng nhập tay, ghép cùng MPR.']},
+    gsheet:    {type:'sheet', lane:'mcl', x:262, y:290, w:220, h:52, title:'Google Sheets', sub:'Sheet 1 + Sheet 2 + …',
+                url:'https://drive.google.com/drive/u/1/folders/1ScC4Om0L7BxcNAET1xst9H6KmyrWX5pQ',
+                info:['Google Sheets','Các file Google Sheets trung gian, gom MPR và dữ liệu nhập tay thành dữ liệu mới cho MCL.']},
+    mcl_past:  {type:'pill', variant:'past', lane:'mcl', x:100, y:400, w:136, h:38, label:'Dữ liệu quá khứ',
+                info:['Dữ liệu quá khứ – MCL','Dữ liệu lịch sử từ file Excel cũ, nạp một lần.']},
+    mcl_new:   {type:'pill', variant:'new', lane:'mcl', x:262, y:400, w:136, h:38, label:'Dữ liệu mới',
+                info:['Dữ liệu mới – MCL','Dữ liệu phát sinh mới từ Google Sheets.']},
+    t_mcl:     {type:'table', lane:'mcl', x:181, y:540, w:222, h:64, title:'MCL', code:'MCL_History',
+                info:['MCL','Danh sách kiểm soát vật tư. Gộp dữ liệu quá khứ và dữ liệu mới.']},
+
+    svc_detail:{type:'service', lane:'detail', x:530, y:286, w:212, h:108, kicker:'Phần mềm Service', title:'QT1. Quản lý dự án', id:'7959', dept:'Ban Quản Lý Dự Án',
+                info:['Quản lý dự án','Quy trình 1 trên phần mềm Service (ID 7959). Nguồn thông tin chung của từng dự án.']},
+    detail_new:{type:'pill', variant:'new', lane:'detail', x:530, y:400, w:136, h:38, label:'Dữ liệu mới',
+                info:['Dữ liệu mới – Dự án','Lấy trực tiếp từ quy trình Quản lý dự án.']},
+    t_detail:  {type:'table', lane:'detail', x:530, y:540, w:222, h:64, title:'Detail_information', code:'Detail_information_history',
+                info:['Detail_information','Thông tin chi tiết từng dự án; các bảng còn lại nối vào đây theo mã dự án.']},
+
+    svc_log:   {type:'service', lane:'logistic', x:810, y:286, w:212, h:108, kicker:'Phần mềm Service', title:'QT Logistics', id:'42428', dept:'Phòng Mua Hàng',
+                info:['Quy trình Logistics','Quy trình trên phần mềm Service (ID 42428). Theo dõi vận chuyển hàng về.']},
+    log_new:   {type:'pill', variant:'new', lane:'logistic', x:810, y:400, w:136, h:38, label:'Dữ liệu mới',
+                info:['Dữ liệu mới – Logistics','Lấy trực tiếp từ quy trình Logistics.']},
+    t_log:     {type:'table', lane:'logistic', x:810, y:540, w:222, h:64, title:'Logistic_input', code:'Logistic_input_History',
+                info:['Logistic_input','Dữ liệu vận chuyển hàng về.']},
+
+    svc_del:   {type:'service', lane:'delivery', x:1170, y:286, w:212, h:108, kicker:'Phần mềm Service', title:'QT Xuất hàng', id:'42450', dept:'Phòng Mua Hàng',
+                info:['Quy trình Xuất hàng','Quy trình trên phần mềm Service (ID 42450). Ghi nhận các lần xuất hàng.']},
+    del_past:  {type:'pill', variant:'past', lane:'delivery', x:1008, y:400, w:136, h:38, label:'Dữ liệu quá khứ',
+                info:['Dữ liệu quá khứ – Xuất hàng','Dữ liệu lịch sử từ file Excel cũ, nạp một lần.']},
+    del_new:   {type:'pill', variant:'new', lane:'delivery', x:1170, y:400, w:136, h:38, label:'Dữ liệu mới',
+                info:['Dữ liệu mới – Xuất hàng','Lấy trực tiếp từ quy trình Xuất hàng.']},
+    t_del:     {type:'table', lane:'delivery', x:1089, y:540, w:222, h:64, title:'Delivery', code:'Delivery_History',
+                info:['Delivery','Dữ liệu xuất hàng cho dự án. Gộp dữ liệu quá khứ và dữ liệu mới.']},
+
+    report:    {type:'report', lane:'all', x:635, y:740, w:560, h:150, title:'Báo cáo', sub:'Báo cáo tổng hợp quản trị mua sắm & dự án',
+                info:['Báo cáo tổng hợp','Báo cáo quản trị mua sắm & dự án, kết hợp cả 4 bảng dữ liệu.']},
+
+    rpt_raw:   {type:'out', lane:'all', x:455, y:905, w:280, h:72, icon:'sheet', title:'Báo cáo Raw', sub:'Google Sheets',
+                url:'https://docs.google.com/spreadsheets/d/1TykAvsHf0XIGn-W7o3vjpqi-OgMMKya-Vh0Aq2GgCNc/edit?pli=1&gid=1484529016#gid=1484529016',
+                info:['Báo cáo Raw','Bảng dữ liệu thô trên Google Sheets.']},
+    rpt_dash:  {type:'out', lane:'all', x:815, y:905, w:280, h:72, icon:'pbi', title:'Báo cáo Dashboard', sub:'Power BI',
+                url:'https://app.powerbi.com/groups/me/reports/02b46ddb-2f9d-4819-acb9-c734b301fd57/6a73fad09009304900b2?experience=power-bi&bookmarkGuid=e4f058bd2df9cb5423b8',
+                info:['Báo cáo Dashboard','Dashboard trên Power BI.']}
+  },
+
+  /* Đường nối – luôn đi thẳng / rẽ vuông góc, từ đáy node nguồn tới đỉnh node đích.
+     via = cao độ y của đoạn ngang khi 2 node lệch cột.
+     Các nguồn cùng gộp vào 1 node đích PHẢI dùng chung via.                       */
+  edges: [
+    {from:'svc_mcl', to:'mpr'},
+    {from:'mpr', to:'gsheet', via:238},
+    {from:'manual', to:'gsheet', via:238},
+    {from:'gsheet', to:'mcl_new'},
+    {from:'mcl_past', to:'t_mcl', via:465},
+    {from:'mcl_new', to:'t_mcl', via:465},
+    {from:'svc_detail', to:'detail_new'}, {from:'detail_new', to:'t_detail'},
+    {from:'svc_log', to:'log_new'},       {from:'log_new', to:'t_log'},
+    {from:'svc_del', to:'del_new'},
+    {from:'del_past', to:'t_del', via:465},
+    {from:'del_new', to:'t_del', via:465},
+    {from:'report', to:'rpt_raw', via:855},
+    {from:'report', to:'rpt_dash', via:855}
+  ],
+
+  /* Đường trục (bus): nhiều nguồn ngang hàng đổ vào 1 node đích.
+     Mỗi nguồn kẻ dọc xuống y (có chấm nối), trục ngang màu xám đậm, rồi 1 mũi tên vào đích. */
+  buses: [
+    {from:['t_mcl','t_detail','t_log','t_del'], to:'report', y:625}
+  ]
+};
+</script>
+
+<!-- ============================ ENGINE (không cần sửa) ============================ -->
 <script>
 (function(){
   const NS = 'http://www.w3.org/2000/svg';
   const svg = document.getElementById('flow');
+  const C = CONFIG, nodes = C.nodes;
+  const LABEL_W = 100;   // dải nhãn tầng bên trái
 
   function el(tag, attrs, parent, text){
     const e = document.createElementNS(NS, tag);
@@ -154,10 +280,26 @@
     return e;
   }
 
-  const COLOR = {
-    mcl:'#0284c7', detail:'#4f46e5', logistic:'#ea580c', delivery:'#c026d3',
-    manual:'#e11d48', past:'#94a3b8', sheet:'#16a34a', bus:'#334155', report:'#0f766e', pbi:'#d4a106'
-  };
+  /* ---------- header, kích thước ---------- */
+  document.title = C.title;
+  document.getElementById('page-title').textContent = C.title;
+  document.getElementById('page-lead').textContent = C.lead || '';
+  const countsBox = document.getElementById('counts');
+  (C.counts||[]).forEach(([n,t])=>{ const d=document.createElement('div'); d.innerHTML='<b></b>'; d.firstChild.textContent=n; d.append(t); countsBox.appendChild(d); });
+  const VW = C.width + LABEL_W, VH = C.height;
+  svg.setAttribute('viewBox', `${-LABEL_W} 0 ${VW} ${VH}`);
+  svg.setAttribute('aria-label', C.title);
+  svg.style.setProperty('--aspect', `${VW}/${VH}`);
+  svg.style.setProperty('--ratio', (VH/VW).toFixed(4));
+
+  /* ---------- màu ---------- */
+  const COLOR = {manual:'#e11d48', past:'#94a3b8', sheet:'#16a34a', bus:'#334155', report:'#0f766e', pbi:'#d4a106', doc:'#2563eb'};
+  Object.entries(C.lanes).forEach(([k,l])=>COLOR[k]=l.color);
+  const laneColor = l => COLOR[l] || COLOR.bus;
+  const DEPT_FALLBACK = ['#65a30d','#a16207','#0d9488','#be123c','#475569','#7c2d12'];
+  const DEPTS = Object.assign({}, C.departments||{});
+  Object.values(C.nodes).forEach(n=>{ if (n.dept && !DEPTS[n.dept]) DEPTS[n.dept] = DEPT_FALLBACK[Object.keys(DEPTS).length % DEPT_FALLBACK.length]; });
+  const deptColor = d => DEPTS[d] || '#475569';
 
   /* ---------- defs ---------- */
   const defs = el('defs');
@@ -169,172 +311,91 @@
   const soft = el('filter', {id:'soft', x:'-10%', y:'-20%', width:'120%', height:'150%'}, defs);
   el('feDropShadow', {dx:'0', dy:'3', stdDeviation:'4', 'flood-color':'#16263a', 'flood-opacity':'.08'}, soft);
   Object.entries(COLOR).forEach(([k,c])=>{
-    const m = el('marker', {id:'arr-'+k, viewBox:'0 0 10 10', refX:'8', refY:'5', markerWidth:'8', markerHeight:'8', orient:'auto', markerUnits:'userSpaceOnUse'}, defs);
-    m.setAttribute('markerWidth','11'); m.setAttribute('markerHeight','11');
+    const m = el('marker', {id:'arr-'+k, viewBox:'0 0 10 10', refX:'8', refY:'5', markerWidth:'11', markerHeight:'11', orient:'auto', markerUnits:'userSpaceOnUse'}, defs);
     el('path', {d:'M0,0.5 L10,5 L0,9.5 Z', fill:c}, m);
   });
 
   const L = { tiers: el('g'), edges: el('g'), nodes: el('g') };
 
-  /* ---------- 3 tầng ---------- */
-  const TIERS = [
-    {n:'1', name:'Khối vận hành',     sub:'Phần mềm Service & thu thập', y0:12,  y1:352, c:'#2563eb'},
-    {n:'2', name:'Kho dữ liệu',       sub:'Dữ liệu & bảng tổng hợp',     y0:364, y1:834, c:'#0f766e'},
-    {n:'3', name:'Báo cáo đầu ra',    sub:'Raw & Dashboard',             y0:846, y1:1000, c:'#b45309'}
-  ];
-  TIERS.forEach(t=>{
-    const h = t.y1 - t.y0, g = el('g', {}, L.tiers);
-    el('rect', {x:-92, y:t.y0, width:1372, height:h, rx:18, fill:t.c, 'fill-opacity':.035, stroke:t.c, 'stroke-opacity':.22, 'stroke-width':1.2}, g);
-    el('rect', {x:-92, y:t.y0, width:62, height:h, rx:18, fill:t.c, 'fill-opacity':.1}, g);
-    el('rect', {x:-40, y:t.y0, width:10, height:h, fill:t.c, 'fill-opacity':.1}, g);   // vuông mép phải dải nhãn
-    el('line', {x1:-30, x2:-30, y1:t.y0, y2:t.y1, stroke:t.c, 'stroke-opacity':.25}, g);
-    el('circle', {cx:-61, cy:t.y0+28, r:14, fill:t.c}, g);
-    el('text', {x:-61, y:t.y0+33, 'text-anchor':'middle', fill:'#fff', style:'font-size:14px;font-weight:800'}, g, t.n);
-    const my = t.y0 + 28 + (h-28)/2;
-    const lbl = el('text', {x:-61, y:my, 'text-anchor':'middle', transform:`rotate(-90 -61 ${my})`}, g);
-    el('tspan', {x:-61, dy:'-2', fill:t.c, style:'font-size:14px;font-weight:800'}, lbl, t.name);
-    if (h > 200) el('tspan', {x:-61, dy:'17', fill:'#64748b', style:'font-size:11px;font-weight:500'}, lbl, t.sub);
-    // Giữ nhãn dọc không đè lên số thứ tự và không tràn khỏi tầng
-    const len = lbl.getBBox().width, startY = t.y0 + 50, endY = t.y1 - 10;
-    if (len > endY - startY) lbl.firstChild.style.fontSize = (14 * (endY - startY) / len).toFixed(1) + 'px';
-    const fit = Math.min(len, endY - startY);
-    const cy = Math.max(my, startY + fit/2);
+  /* ---------- tầng ---------- */
+  (C.tiers||[]).forEach((t,i)=>{
+    const h = t.y1 - t.y0, g = el('g', {}, L.tiers), c = t.color;
+    el('rect', {x:-92, y:t.y0, width:C.width+84, height:h, rx:18, fill:c, 'fill-opacity':.035, stroke:c, 'stroke-opacity':.22, 'stroke-width':1.2}, g);
+    el('rect', {x:-92, y:t.y0, width:62, height:h, rx:18, fill:c, 'fill-opacity':.1}, g);
+    el('rect', {x:-40, y:t.y0, width:10, height:h, fill:c, 'fill-opacity':.1}, g);
+    el('line', {x1:-30, x2:-30, y1:t.y0, y2:t.y1, stroke:c, 'stroke-opacity':.25}, g);
+    el('circle', {cx:-61, cy:t.y0+28, r:14, fill:c}, g);
+    el('text', {x:-61, y:t.y0+33, 'text-anchor':'middle', fill:'#fff', style:'font-size:14px;font-weight:800'}, g, String(i+1));
+    const lbl = el('text', {x:-61, y:0, 'text-anchor':'middle'}, g);
+    el('tspan', {x:-61, dy:'-2', fill:c, style:'font-size:14px;font-weight:800'}, lbl, t.name);
+    if (h > 200 && t.sub) el('tspan', {x:-61, dy:'17', fill:'#64748b', style:'font-size:11px;font-weight:500'}, lbl, t.sub);
+    // nhãn dọc: không đè số thứ tự, không tràn khỏi tầng
+    const len = lbl.getBBox().width, startY = t.y0 + 50, endY = t.y1 - 10, room = endY - startY;
+    if (len > room) lbl.firstChild.style.fontSize = (14 * room / len).toFixed(1) + 'px';
+    const cy = Math.max(t.y0 + 28 + (h-28)/2, startY + Math.min(len, room)/2);
     lbl.setAttribute('y', cy);
-    lbl.querySelectorAll('tspan').forEach(ts=>ts.setAttribute('x', -61));
     lbl.setAttribute('transform', `rotate(-90 -61 ${cy})`);
   });
 
-  /* ---------- nodes (giữ bố cục như sơ đồ gốc) ---------- */
-  const nodes = {
-    svc_mcl:   {type:'service', lane:'mcl', x:180, y:80, w:212, h:84, kicker:'Phần mềm Service', title:'QT2. Lập và duyệt MPR', id:'8438',
-                info:['Lập và duyệt MPR','Quy trình 2 trên phần mềm Service (ID 8438). Phiếu đề nghị mua vật tư (MPR) được lập và phê duyệt tại đây.']},
-    mpr:       {type:'pill', variant:'new', lane:'mcl', x:180, y:190, w:110, h:38, label:'MPR',
-                info:['MPR','Phiếu MPR đã duyệt, lấy ra từ quy trình 2.']},
-    manual:    {type:'pill', variant:'manual', lane:'mcl', x:345, y:190, w:140, h:38, label:'✎ Nhập thủ công',
-                info:['Nhập thủ công','Thông tin bổ sung do người dùng nhập tay, ghép cùng MPR.']},
-    gsheet:    {type:'sheet', lane:'mcl', x:262, y:290, w:220, h:52, title:'Google Sheets', sub:'Sheet 1 + Sheet 2 + …',
-                url:'https://drive.google.com/drive/u/1/folders/1ScC4Om0L7BxcNAET1xst9H6KmyrWX5pQ',
-                info:['Google Sheets','Các file Google Sheets trung gian, gom MPR và dữ liệu nhập tay thành dữ liệu mới cho MCL. Bấm vào khối để mở thư mục Google Drive chứa các file.']},
-    mcl_past:  {type:'pill', variant:'past', lane:'mcl', x:100, y:400, w:136, h:38, label:'Dữ liệu quá khứ',
-                info:['Dữ liệu quá khứ – MCL','Dữ liệu lịch sử từ file Excel cũ, nạp một lần.']},
-    mcl_new:   {type:'pill', variant:'new', lane:'mcl', x:262, y:400, w:136, h:38, label:'Dữ liệu mới',
-                info:['Dữ liệu mới – MCL','Dữ liệu phát sinh mới từ Google Sheets.']},
-    t_mcl:     {type:'table', lane:'mcl', x:181, y:540, w:222, h:64, title:'MCL', code:'MCL_History',
-                info:['MCL','Danh sách kiểm soát vật tư. Gộp dữ liệu quá khứ và dữ liệu mới.']},
-
-    svc_detail:{type:'service', lane:'detail', x:530, y:290, w:212, h:84, kicker:'Phần mềm Service', title:'QT1. Quản lý dự án', id:'7959',
-                info:['Quản lý dự án','Quy trình 1 trên phần mềm Service (ID 7959). Nguồn thông tin chung của từng dự án.']},
-    detail_new:{type:'pill', variant:'new', lane:'detail', x:530, y:400, w:136, h:38, label:'Dữ liệu mới',
-                info:['Dữ liệu mới – Dự án','Lấy trực tiếp từ quy trình Quản lý dự án.']},
-    t_detail:  {type:'table', lane:'detail', x:530, y:540, w:222, h:64, title:'Detail_information', code:'Detail_information_history',
-                info:['Detail_information','Thông tin chi tiết từng dự án; các bảng còn lại nối vào đây theo mã dự án.']},
-
-    svc_log:   {type:'service', lane:'logistic', x:810, y:290, w:212, h:84, kicker:'Phần mềm Service', title:'QT Logistics', id:'42428',
-                info:['Quy trình Logistics','Quy trình trên phần mềm Service (ID 42428). Theo dõi vận chuyển hàng về.']},
-    log_new:   {type:'pill', variant:'new', lane:'logistic', x:810, y:400, w:136, h:38, label:'Dữ liệu mới',
-                info:['Dữ liệu mới – Logistics','Lấy trực tiếp từ quy trình Logistics.']},
-    t_log:     {type:'table', lane:'logistic', x:810, y:540, w:222, h:64, title:'Logistic_input', code:'Logistic_input_History',
-                info:['Logistic_input','Dữ liệu vận chuyển hàng về.']},
-
-    svc_del:   {type:'service', lane:'delivery', x:1170, y:290, w:212, h:84, kicker:'Phần mềm Service', title:'QT Xuất hàng', id:'42450',
-                info:['Quy trình Xuất hàng','Quy trình trên phần mềm Service (ID 42450). Ghi nhận các lần xuất hàng.']},
-    del_past:  {type:'pill', variant:'past', lane:'delivery', x:1008, y:400, w:136, h:38, label:'Dữ liệu quá khứ',
-                info:['Dữ liệu quá khứ – Xuất hàng','Dữ liệu lịch sử từ file Excel cũ, nạp một lần.']},
-    del_new:   {type:'pill', variant:'new', lane:'delivery', x:1170, y:400, w:136, h:38, label:'Dữ liệu mới',
-                info:['Dữ liệu mới – Xuất hàng','Lấy trực tiếp từ quy trình Xuất hàng.']},
-    t_del:     {type:'table', lane:'delivery', x:1089, y:540, w:222, h:64, title:'Delivery', code:'Delivery_History',
-                info:['Delivery','Dữ liệu xuất hàng cho dự án. Gộp dữ liệu quá khứ và dữ liệu mới.']},
-
-    report:    {type:'report', lane:'all', x:635, y:740, w:560, h:150,
-                info:['Báo cáo tổng hợp','Báo cáo quản trị mua sắm & dự án, kết hợp cả 4 bảng dữ liệu.']},
-
-    rpt_raw:   {type:'out', lane:'all', x:455, y:905, w:280, h:72, icon:'sheet', title:'Báo cáo Raw', sub:'Google Sheets',
-                url:'https://docs.google.com/spreadsheets/d/1TykAvsHf0XIGn-W7o3vjpqi-OgMMKya-Vh0Aq2GgCNc/edit?pli=1&gid=1484529016#gid=1484529016',
-                info:['Báo cáo Raw','Bảng dữ liệu thô trên Google Sheets. Bấm vào khối để mở.']},
-    rpt_dash:  {type:'out', lane:'all', x:815, y:905, w:280, h:72, icon:'pbi', title:'Báo cáo Dashboard', sub:'Power BI',
-                url:'https://app.powerbi.com/groups/me/reports/02b46ddb-2f9d-4819-acb9-c734b301fd57/6a73fad09009304900b2?experience=power-bi&bookmarkGuid=e4f058bd2df9cb5423b8',
-                info:['Báo cáo Dashboard','Dashboard trên Power BI. Bấm vào khối để mở.']}
-  };
-
-  // Link phần mềm Service = base + ID quy trình
+  /* ---------- chuẩn hoá node ---------- */
   Object.values(nodes).forEach(n=>{
-    if (n.type==='service'){
-      n.url = 'https://service.base.vn/services/' + n.id;
-      n.info[1] += ' Bấm vào khối để mở quy trình trên Service.';
-    }
+    if (n.type==='service' && !n.url && C.serviceBaseUrl) n.url = C.serviceBaseUrl + n.id;
+    if (!n.info) n.info = [n.title || n.label || '', ''];
+    if (n.dept) n.info = [n.info[0], (n.info[1] ? n.info[1] + ' ' : '') + 'Phòng thực hiện: ' + n.dept + '.'];
+    if (n.url) n.info = [n.info[0], (n.info[1] ? n.info[1] + ' ' : '') + 'Bấm vào khối để mở link.'];
   });
-
   const top = n => [n.x, n.y - n.h/2];
   const bot = n => [n.x, n.y + n.h/2];
 
-  /* ---------- edges: chỉ đường thẳng góc vuông ---------- */
+  /* ---------- đường nối vuông góc ---------- */
   function roundedPath(pts, r){
     let d = `M${pts[0][0]},${pts[0][1]}`;
     for (let i=1;i<pts.length-1;i++){
       const [x0,y0]=pts[i-1], [x1,y1]=pts[i], [x2,y2]=pts[i+1];
       const d1 = Math.min(r, Math.hypot(x1-x0,y1-y0)/2), d2 = Math.min(r, Math.hypot(x2-x1,y2-y1)/2);
-      const ax = x1 - Math.sign(x1-x0)*d1, ay = y1 - Math.sign(y1-y0)*d1;
-      const bx = x1 + Math.sign(x2-x1)*d2, by = y1 + Math.sign(y2-y1)*d2;
-      d += ` L${ax},${ay} Q${x1},${y1} ${bx},${by}`;
+      d += ` L${x1-Math.sign(x1-x0)*d1},${y1-Math.sign(y1-y0)*d1} Q${x1},${y1} ${x1+Math.sign(x2-x1)*d2},${y1+Math.sign(y2-y1)*d2}`;
     }
     const last = pts[pts.length-1];
     return d + ` L${last[0]},${last[1]}`;
   }
-  function route(A, B, ym){
+  function route(A, B, via){
     const [x1,y1] = bot(A), [x2,y2t] = top(B), y2 = y2t - 2;
     if (Math.abs(x1-x2) < 0.5) return [[x1,y1],[x2,y2]];
+    const ym = via != null ? via : (y1+y2)/2;
     return [[x1,y1],[x1,ym],[x2,ym],[x2,y2]];
   }
   function drawEdge(pts, colorKey, lane, opts={}){
-    const c = COLOR[colorKey];
+    const c = COLOR[colorKey] || COLOR.bus;
     const g = el('g', {'data-lane':lane, class:'edge'}, L.edges);
     const d = roundedPath(pts, 12);
-    const p = el('path', {d, fill:'none', stroke:c, 'stroke-width':2.2, 'stroke-linejoin':'round'}, g);
-    if (opts.arrow !== false) p.setAttribute('marker-end', `url(#arr-${colorKey})`);
+    const p = el('path', {d, fill:'none', stroke:c, 'stroke-width':opts.width||2.2, 'stroke-linejoin':'round'}, g);
+    if (opts.arrow !== false) p.setAttribute('marker-end', `url(#arr-${COLOR[colorKey]?colorKey:'bus'})`);
     if (opts.dash) p.setAttribute('stroke-dasharray', opts.dash);
-    el('path', {d, fill:'none', stroke:'#fff', 'stroke-width':2.2, 'stroke-opacity':.85, class:'flow'}, g);
+    el('path', {d, fill:'none', stroke:'#fff', 'stroke-width':opts.width||2.2, 'stroke-opacity':.85, class:'flow'}, g);
     return g;
   }
-
-  const E = (a,b,ym)=>{
-    const A=nodes[a], B=nodes[b];
-    const key = A.variant==='past' ? 'past' : (a==='manual' ? 'manual' : A.lane);
-    drawEdge(route(A,B,ym), key, A.lane, A.variant==='past' ? {dash:'6 4'} : {});
-  };
-
-  // Nhánh MCL
-  E('svc_mcl','mpr');
-  E('mpr','gsheet',238);
-  E('manual','gsheet',238);
-  E('gsheet','mcl_new');
-  E('mcl_past','t_mcl',465);
-  E('mcl_new','t_mcl',465);
-  // Nhánh Dự án / Logistics
-  E('svc_detail','detail_new'); E('detail_new','t_detail');
-  E('svc_log','log_new');       E('log_new','t_log');
-  // Nhánh Xuất hàng
-  E('svc_del','del_new');
-  E('del_past','t_del',465);
-  E('del_new','t_del',465);
-
-  // Gom 4 bảng vào báo cáo qua một đường trục
-  const BUS = 625, R = nodes.report;
-  ['t_mcl','t_detail','t_log','t_del'].forEach(k=>{
-    const n = nodes[k], [x,y] = bot(n);
-    const g = drawEdge([[x,y],[x,BUS]], n.lane, n.lane, {arrow:false});
-    el('circle', {cx:x, cy:BUS, r:4.5, fill:COLOR[n.lane], stroke:'#fff', 'stroke-width':1.5}, g);
+  (C.edges||[]).forEach(e=>{
+    const A = nodes[e.from], B = nodes[e.to];
+    if (!A || !B){ console.error('Edge lỗi, không tìm thấy node:', e); return; }
+    const key = e.color || (A.variant==='past' ? 'past' : A.variant==='manual' ? 'manual' : (A.lane==='all' ? 'bus' : A.lane));
+    drawEdge(route(A,B,e.via), key, A.lane, A.variant==='past' ? {dash:'6 4'} : {});
   });
-  const busG = el('g', {'data-lane':'all'}, L.edges);
-  el('path', {d:`M${nodes.t_mcl.x},${BUS} L${nodes.t_del.x},${BUS}`, stroke:COLOR.bus, 'stroke-width':2.6, fill:'none', 'stroke-linecap':'round'}, busG);
-  el('path', {d:`M${R.x},${BUS} L${R.x},${R.y-R.h/2-2}`, stroke:COLOR.bus, 'stroke-width':2.6, fill:'none', 'marker-end':'url(#arr-bus)'}, busG);
-  el('path', {d:`M${R.x},${BUS} L${R.x},${R.y-R.h/2-2}`, stroke:'#fff', 'stroke-width':2.6, 'stroke-opacity':.85, fill:'none', class:'flow'}, busG);
-
-  ['rpt_raw','rpt_dash'].forEach(k=>{
-    const B = nodes[k];
-    drawEdge(route(R, B, 855), 'bus', 'all');
+  (C.buses||[]).forEach(b=>{
+    const T = nodes[b.to], xs = [T.x];
+    b.from.forEach(k=>{
+      const n = nodes[k], [x,y] = bot(n); xs.push(x);
+      const g = drawEdge([[x,y],[x,b.y]], n.lane, n.lane, {arrow:false});
+      el('circle', {cx:x, cy:b.y, r:4.5, fill:laneColor(n.lane), stroke:'#fff', 'stroke-width':1.5}, g);
+    });
+    const g = el('g', {'data-lane':'all'}, L.edges);
+    el('path', {d:`M${Math.min(...xs)},${b.y} L${Math.max(...xs)},${b.y}`, stroke:COLOR.bus, 'stroke-width':2.6, fill:'none', 'stroke-linecap':'round'}, g);
+    const d = `M${T.x},${b.y} L${T.x},${T.y-T.h/2-2}`;
+    el('path', {d, stroke:COLOR.bus, 'stroke-width':2.6, fill:'none', 'marker-end':'url(#arr-bus)'}, g);
+    el('path', {d, stroke:'#fff', 'stroke-width':2.6, 'stroke-opacity':.85, fill:'none', class:'flow'}, g);
+    if (!T.chips) T.chips = b.from.map(k=>[nodes[k].title, nodes[k].lane]);
   });
 
-  /* ---------- node drawers ---------- */
+  /* ---------- vẽ node ---------- */
   function nodeGroup(key, n){
     return el('g', {class:'node', 'data-lane':n.lane, 'data-key':key, tabindex:'0', role:'button', 'aria-label':n.info[0]}, L.nodes);
   }
@@ -344,99 +405,145 @@
     el('path', {d:'M13,1 L7,7'}, ic);
     el('path', {d:'M11,8.5 V12 a1,1 0 0 1 -1,1 H2 a1,1 0 0 1 -1,-1 V4 a1,1 0 0 1 1,-1 H5.5'}, ic);
   }
-  function drawOut(key, n){
-    const x = n.x-n.w/2, y = n.y-n.h/2, g = nodeGroup(key,n);
-    const c = n.icon==='pbi' ? COLOR.pbi : COLOR.sheet;
-    el('rect', {class:'shape', x, y, width:n.w, height:n.h, rx:14, fill:'#fff', stroke:c, 'stroke-width':1.7, filter:'url(#soft)'}, g);
-    const ix = x+20, iy = n.y-16;
-    if (n.icon==='sheet'){
-      el('rect', {x:ix, y:iy, width:26, height:32, rx:4, fill:c}, g);
-      el('rect', {x:ix+5, y:iy+10, width:16, height:15, fill:'none', stroke:'#fff', 'stroke-width':1.5}, g);
-      el('line', {x1:ix+13, x2:ix+13, y1:iy+10, y2:iy+25, stroke:'#fff', 'stroke-width':1.5}, g);
-      el('line', {x1:ix+5, x2:ix+21, y1:iy+17.5, y2:iy+17.5, stroke:'#fff', 'stroke-width':1.5}, g);
-    } else {
-      el('rect', {x:ix, y:iy, width:30, height:32, rx:6, fill:'#fdf6dc'}, g);
-      [[5,16,'#e8b70a'],[12,10,'#d4a106'],[19,4,'#b88a00']].forEach(([dx,dy,f])=>{
-        el('rect', {x:ix+dx, y:iy+dy, width:6, height:28-dy, rx:1.5, fill:f}, g);
+  function sheetIcon(g, ix, iy, w, h, c){
+    el('rect', {x:ix, y:iy, width:w, height:h, rx:3.5, fill:c}, g);
+    const px = ix+w*.2, py = iy+h*.32, pw = w*.6, ph = h*.46;
+    el('rect', {x:px, y:py, width:pw, height:ph, fill:'none', stroke:'#fff', 'stroke-width':1.4}, g);
+    el('line', {x1:px+pw/2, x2:px+pw/2, y1:py, y2:py+ph, stroke:'#fff', 'stroke-width':1.4}, g);
+    el('line', {x1:px, x2:px+pw, y1:py+ph/2, y2:py+ph/2, stroke:'#fff', 'stroke-width':1.4}, g);
+  }
+  const drawers = {
+    service(key, n){
+      const c = laneColor(n.lane), x = n.x-n.w/2, y = n.y-n.h/2, g = nodeGroup(key,n);
+      el('rect', {class:'shape', x, y, width:n.w, height:n.h, rx:14, fill:'#fff', stroke:'#cdd6e1', 'stroke-width':1.4, filter:'url(#soft)'}, g);
+      el('rect', {x:x+18, y:y-1.5, width:n.w-36, height:4, rx:2, fill:c}, g);
+      el('text', {x:n.x, y:y+25, 'text-anchor':'middle', class:'n-kicker'}, g, n.kicker || 'Phần mềm Service');
+      el('text', {x:n.x, y:y+46, 'text-anchor':'middle', class:'n-title'}, g, n.title);
+      if (n.id){
+        const label = 'ID ' + n.id, cw = 22 + label.length*6.4;
+        el('rect', {x:n.x-cw/2, y:y+55, width:cw, height:19, rx:6, fill:c, 'fill-opacity':.1}, g);
+        el('text', {x:n.x, y:y+68.5, 'text-anchor':'middle', class:'n-id', style:'fill:'+c}, g, label);
+      }
+      if (n.url) linkIcon(g, x+n.w-24, y+10, '#94a3b8');
+      if (n.dept){
+        // Chân thẻ: phòng thực hiện quy trình
+        const fy = y + n.h - 26, r = 14;
+        const dc = deptColor(n.dept);
+        g.setAttribute('data-dept', n.dept);
+        el('path', {d:`M${x+1},${fy} H${x+n.w-1} V${y+n.h-r} a${r},${r} 0 0 1 -${r},${r} H${x+r} a${r},${r} 0 0 1 -${r},-${r} Z`, fill:'#fff'}, g);
+        el('path', {d:`M${x+1},${fy} H${x+n.w-1} V${y+n.h-r} a${r},${r} 0 0 1 -${r},${r} H${x+r} a${r},${r} 0 0 1 -${r},-${r} Z`, fill:dc, 'fill-opacity':.13}, g);
+        el('line', {x1:x+1, x2:x+n.w-1, y1:fy, y2:fy, stroke:dc, 'stroke-opacity':.35}, g);
+        const t = el('text', {x:n.x+9, y:fy+17.5, 'text-anchor':'middle', class:'n-dept', style:'fill:'+dc}, g, n.dept);
+        const tw = t.getBBox().width, ix = n.x + 9 - tw/2 - 18, iy = fy + 7;
+        const ic = el('g', {transform:`translate(${ix},${iy})`, fill:'none', stroke:dc, 'stroke-width':1.5, 'stroke-linecap':'round'}, g);
+        el('circle', {cx:5, cy:3.5, r:2.6}, ic);
+        el('path', {d:'M0.5,12 a4.5,4.5 0 0 1 9,0'}, ic);
+        el('circle', {cx:11.5, cy:4.5, r:2}, ic);
+        el('path', {d:'M10.5,8.3 a3.6,3.6 0 0 1 4.6,3.7'}, ic);
+      }
+    },
+    pill(key, n){
+      const x = n.x-n.w/2, y = n.y-n.h/2, g = nodeGroup(key,n);
+      let c = laneColor(n.lane), dash = null, txt = c;
+      if (n.variant==='past'){ c = COLOR.past; dash='4 3'; txt='#475569'; }
+      if (n.variant==='manual'){ c = COLOR.manual; dash='4 3'; txt=c; }
+      el('rect', {x, y, width:n.w, height:n.h, rx:n.h/2, fill:'#fff'}, g);
+      const r = el('rect', {class:'shape', x, y, width:n.w, height:n.h, rx:n.h/2, fill:c, 'fill-opacity':.1, stroke:c, 'stroke-width':1.5}, g);
+      if (dash) r.setAttribute('stroke-dasharray', dash);
+      el('text', {x:n.x, y:n.y+4.5, 'text-anchor':'middle', class:'n-pill', fill:txt}, g, n.label);
+    },
+    sheet(key, n){
+      const c = COLOR.sheet, x = n.x-n.w/2, y = n.y-n.h/2, g = nodeGroup(key,n);
+      el('rect', {class:'shape', x, y, width:n.w, height:n.h, rx:12, fill:'#fff', stroke:c, 'stroke-width':1.5, filter:'url(#soft)'}, g);
+      sheetIcon(g, x+18, n.y-12, 20, 24, c);
+      el('text', {x:x+50, y:n.y-2, class:'n-title', style:'font-size:13.5px'}, g, n.title);
+      el('text', {x:x+50, y:n.y+14, class:'n-code', style:'font-size:11px'}, g, n.sub || '');
+      if (n.url) linkIcon(g, x+n.w-24, y+8, '#94a3b8');
+    },
+    table(key, n){
+      const c = laneColor(n.lane), x = n.x-n.w/2, y = n.y-n.h/2, g = nodeGroup(key,n);
+      el('rect', {class:'shape', x, y, width:n.w, height:n.h, rx:12, fill:'#fff', stroke:c, 'stroke-width':1.7, filter:'url(#soft)'}, g);
+      const cx = x+27, cy = n.y-10;
+      el('path', {d:`M${cx-10},${cy} v18 a10,4 0 0 0 20,0 v-18`, fill:c, 'fill-opacity':.14, stroke:c, 'stroke-width':1.5}, g);
+      el('path', {d:`M${cx-10},${cy+9} a10,4 0 0 0 20,0`, fill:'none', stroke:c, 'stroke-width':1.5}, g);
+      el('ellipse', {cx, cy, rx:10, ry:4, fill:'#fff', stroke:c, 'stroke-width':1.5}, g);
+      el('text', {x:x+46, y:n.y-3, class:'n-title'}, g, n.title);
+      el('text', {x:x+46, y:n.y+14, class:'n-code'}, g, n.code || '');
+      if (n.url) linkIcon(g, x+n.w-24, y+8, '#94a3b8');
+    },
+    report(key, n){
+      const x = n.x-n.w/2, y = n.y-n.h/2, g = nodeGroup(key,n);
+      el('rect', {class:'shape', x, y, width:n.w, height:n.h, rx:22, fill:'url(#gReport)', stroke:'#0f5a4c', 'stroke-width':1, filter:'url(#glow)'}, g);
+      el('circle', {cx:x+n.w-40, cy:y+30, r:70, fill:'none', stroke:'#fff', 'stroke-opacity':.06, 'stroke-width':18}, g);
+      const t = el('text', {x:n.x+14, y:y+52, 'text-anchor':'middle', fill:'#fff', style:'font-size:27px;font-weight:800;letter-spacing:-.01em'}, g, n.title || 'Báo cáo');
+      const tw = t.getBBox().width, ix = n.x+14 - tw/2 - 38, iy = y+30;
+      [[0,14],[9,8],[18,0]].forEach(([dx,dy],i)=>el('rect', {x:ix+dx, y:iy+dy, width:6, height:24-dy, rx:1.5, fill:'#6ee7b7', 'fill-opacity':.65+i*.15}, g));
+      el('text', {x:n.x, y:y+80, 'text-anchor':'middle', fill:'#cfe7e1', style:'font-size:13.5px'}, g, n.sub || '');
+      const chips = n.chips || [];
+      const widths = chips.map(([t])=>t.length*6.8+32), gap = 10;
+      let cx = n.x - (widths.reduce((a,b)=>a+b,0) + gap*Math.max(chips.length-1,0))/2;
+      chips.forEach(([t,l],i)=>{
+        const w = widths[i];
+        el('rect', {x:cx, y:y+100, width:w, height:26, rx:13, fill:'#fff', 'fill-opacity':.1, stroke:'#fff', 'stroke-opacity':.18}, g);
+        el('circle', {cx:cx+13, cy:y+113, r:4, fill:laneColor(l)}, g);
+        el('text', {x:cx+22, y:y+117, fill:'#e6f4f1', style:'font-size:11.5px;font-weight:600'}, g, t);
+        cx += w + gap;
       });
+      if (n.url) linkIcon(g, x+n.w-30, y+14, '#cfe7e1');
+    },
+    out(key, n){
+      const x = n.x-n.w/2, y = n.y-n.h/2, g = nodeGroup(key,n);
+      const c = COLOR[n.icon] || COLOR.doc;
+      el('rect', {class:'shape', x, y, width:n.w, height:n.h, rx:14, fill:'#fff', stroke:c, 'stroke-width':1.7, filter:'url(#soft)'}, g);
+      const ix = x+20, iy = n.y-16;
+      if (n.icon==='sheet') sheetIcon(g, ix, iy, 26, 32, c);
+      else if (n.icon==='pbi'){
+        el('rect', {x:ix, y:iy, width:30, height:32, rx:6, fill:'#fdf6dc'}, g);
+        [[5,16,'#e8b70a'],[12,10,'#d4a106'],[19,4,'#b88a00']].forEach(([dx,dy,f])=>el('rect', {x:ix+dx, y:iy+dy, width:6, height:28-dy, rx:1.5, fill:f}, g));
+      } else {
+        el('path', {d:`M${ix},${iy+3} a3,3 0 0 1 3,-3 h14 l9,9 v20 a3,3 0 0 1 -3,3 h-20 a3,3 0 0 1 -3,-3 Z`, fill:c, 'fill-opacity':.14, stroke:c, 'stroke-width':1.5}, g);
+        [12,18,24].forEach(dy=>el('line', {x1:ix+6, x2:ix+20, y1:iy+dy, y2:iy+dy, stroke:c, 'stroke-width':1.5}, g));
+      }
+      el('text', {x:ix+44, y:n.y-2, class:'n-title', style:'font-size:15px'}, g, n.title);
+      el('text', {x:ix+44, y:n.y+16, class:'n-code', style:'font-size:11.5px'}, g, (n.sub||'') + (n.url ? ' – bấm để mở' : ''));
+      if (n.url) linkIcon(g, x+n.w-30, y+12, '#64748b');
     }
-    el('text', {x:ix+44, y:n.y-2, class:'n-title', style:'font-size:15px'}, g, n.title);
-    el('text', {x:ix+44, y:n.y+16, class:'n-code', style:'font-size:11.5px'}, g, n.sub + ' – bấm để mở');
-    linkIcon(g, x+n.w-30, y+12, '#64748b');
-  }
-  function drawService(key, n){
-    const c = COLOR[n.lane], x = n.x-n.w/2, y = n.y-n.h/2, g = nodeGroup(key,n);
-    el('rect', {class:'shape', x, y, width:n.w, height:n.h, rx:14, fill:'#fff', stroke:'#cdd6e1', 'stroke-width':1.4, filter:'url(#soft)'}, g);
-    el('rect', {x:x+18, y:y-1.5, width:n.w-36, height:4, rx:2, fill:c}, g);
-    el('text', {x:n.x, y:y+25, 'text-anchor':'middle', class:'n-kicker'}, g, n.kicker);
-    el('text', {x:n.x, y:y+46, 'text-anchor':'middle', class:'n-title'}, g, n.title);
-    const label = 'ID ' + n.id, cw = 22 + label.length*6.4;
-    el('rect', {x:n.x-cw/2, y:y+55, width:cw, height:19, rx:6, fill:c, 'fill-opacity':.1}, g);
-    el('text', {x:n.x, y:y+68.5, 'text-anchor':'middle', class:'n-id', style:'fill:'+c}, g, label);
-    linkIcon(g, x+n.w-24, y+10, '#94a3b8');
-  }
-  function drawPill(key, n){
-    const x = n.x-n.w/2, y = n.y-n.h/2, g = nodeGroup(key,n);
-    let fill, stroke, dash, txt;
-    if (n.variant==='new'){ const c=COLOR[n.lane]; fill=c; stroke=c; txt=c; }
-    if (n.variant==='past'){ fill='#94a3b8'; stroke='#94a3b8'; dash='4 3'; txt='#475569'; }
-    if (n.variant==='manual'){ fill=COLOR.manual; stroke=COLOR.manual; dash='4 3'; txt=COLOR.manual; }
-    el('rect', {x, y, width:n.w, height:n.h, rx:n.h/2, fill:'#fff'}, g);
-    const r = el('rect', {class:'shape', x, y, width:n.w, height:n.h, rx:n.h/2, fill, 'fill-opacity':.1, stroke, 'stroke-width':1.5}, g);
-    if (dash) r.setAttribute('stroke-dasharray', dash);
-    el('text', {x:n.x, y:n.y+4.5, 'text-anchor':'middle', class:'n-pill', fill:txt}, g, n.label);
-  }
-  function drawSheet(key, n){
-    const c = COLOR.sheet, x = n.x-n.w/2, y = n.y-n.h/2, g = nodeGroup(key,n);
-    el('rect', {class:'shape', x, y, width:n.w, height:n.h, rx:12, fill:'#fff', stroke:c, 'stroke-width':1.5, filter:'url(#soft)'}, g);
-    const ix = x+18, iy = n.y-12;
-    el('rect', {x:ix, y:iy, width:20, height:24, rx:3, fill:c}, g);
-    el('rect', {x:ix+4, y:iy+8, width:12, height:11, fill:'none', stroke:'#fff', 'stroke-width':1.3}, g);
-    el('line', {x1:ix+10, x2:ix+10, y1:iy+8, y2:iy+19, stroke:'#fff', 'stroke-width':1.3}, g);
-    el('line', {x1:ix+4, x2:ix+16, y1:iy+13.5, y2:iy+13.5, stroke:'#fff', 'stroke-width':1.3}, g);
-    el('text', {x:x+50, y:n.y-2, class:'n-title', style:'font-size:13.5px'}, g, n.title);
-    el('text', {x:x+50, y:n.y+14, class:'n-code', style:'font-size:11px'}, g, n.sub);
-    linkIcon(g, x+n.w-24, y+8, '#94a3b8');
-  }
-  function drawTable(key, n){
-    const c = COLOR[n.lane], x = n.x-n.w/2, y = n.y-n.h/2, g = nodeGroup(key,n);
-    el('rect', {class:'shape', x, y, width:n.w, height:n.h, rx:12, fill:'#fff', stroke:c, 'stroke-width':1.7, filter:'url(#soft)'}, g);
-    const cx = x+27, cy = n.y-10;
-    el('path', {d:`M${cx-10},${cy} v18 a10,4 0 0 0 20,0 v-18`, fill:c, 'fill-opacity':.14, stroke:c, 'stroke-width':1.5}, g);
-    el('path', {d:`M${cx-10},${cy+9} a10,4 0 0 0 20,0`, fill:'none', stroke:c, 'stroke-width':1.5}, g);
-    el('ellipse', {cx, cy, rx:10, ry:4, fill:'#fff', stroke:c, 'stroke-width':1.5}, g);
-    el('text', {x:x+46, y:n.y-3, class:'n-title'}, g, n.title);
-    el('text', {x:x+46, y:n.y+14, class:'n-code'}, g, n.code);
-  }
-  function drawReport(key, n){
-    const x = n.x-n.w/2, y = n.y-n.h/2, g = nodeGroup(key,n);
-    el('rect', {class:'shape', x, y, width:n.w, height:n.h, rx:22, fill:'url(#gReport)', stroke:'#0f5a4c', 'stroke-width':1, filter:'url(#glow)'}, g);
-    el('circle', {cx:x+n.w-40, cy:y+30, r:70, fill:'none', stroke:'#fff', 'stroke-opacity':.06, 'stroke-width':18}, g);
-    const ix = n.x-92, iy = y+30;
-    [[0,14],[9,8],[18,0]].forEach(([dx,dy],i)=>{
-      el('rect', {x:ix+dx, y:iy+dy, width:6, height:24-dy, rx:1.5, fill:'#6ee7b7', 'fill-opacity':.65+i*.15}, g);
-    });
-    el('text', {x:n.x+14, y:y+52, 'text-anchor':'middle', fill:'#fff', style:'font-size:27px;font-weight:800;letter-spacing:-.01em'}, g, 'Báo cáo');
-    el('text', {x:n.x, y:y+80, 'text-anchor':'middle', fill:'#cfe7e1', style:'font-size:13.5px'}, g, 'Báo cáo tổng hợp quản trị mua sắm & dự án');
-    const chips = [['MCL','mcl'],['Detail_information','detail'],['Logistic_input','logistic'],['Delivery','delivery']];
-    const widths = chips.map(([t])=>t.length*6.8+32), gap = 10;
-    let cx = n.x - (widths.reduce((a,b)=>a+b,0) + gap*(chips.length-1))/2;
-    chips.forEach(([t,l],i)=>{
-      const w = widths[i];
-      el('rect', {x:cx, y:y+100, width:w, height:26, rx:13, fill:'#fff', 'fill-opacity':.1, stroke:'#fff', 'stroke-opacity':.18}, g);
-      el('circle', {cx:cx+13, cy:y+113, r:4, fill:COLOR[l]}, g);
-      el('text', {x:cx+22, y:y+117, fill:'#e6f4f1', style:'font-size:11.5px;font-weight:600'}, g, t);
-      cx += w + gap;
-    });
-  }
-  const drawers = {service:drawService, pill:drawPill, sheet:drawSheet, table:drawTable, report:drawReport, out:drawOut};
-  Object.entries(nodes).forEach(([k,n])=>drawers[n.type](k,n));
+  };
+  Object.entries(nodes).forEach(([k,n])=>{
+    if (!drawers[n.type]) return console.error('Loại node không hỗ trợ:', k, n.type);
+    drawers[n.type](k,n);
+  });
+
+  /* ---------- chú thích: tự sinh theo loại node có mặt ---------- */
+  const types = new Set(Object.values(nodes).map(n=>n.type==='pill' ? 'pill-'+n.variant : n.type));
+  const anyLink = Object.values(nodes).some(n=>n.url);
+  const LEG = [
+    ['service','svc','Quy trình trên phần mềm'], ['pill-manual','manual','Dữ liệu nhập thủ công'],
+    ['pill-new','new','Dữ liệu mới, cập nhật định kỳ'], ['pill-past','past','Dữ liệu quá khứ (Excel cũ)'],
+    ['table','table','Bảng dữ liệu đích'], ['report','report','Báo cáo tổng hợp'], ['out','out','Báo cáo đầu ra']
+  ];
+  const ul = document.getElementById('legend');
+  LEG.filter(([t])=>types.has(t)).concat(anyLink ? [[null,'link','Bấm để mở link']] : []).forEach(([,cls,txt])=>{
+    const li = document.createElement('li'); li.innerHTML = `<span class="sw ${cls}"></span>`; li.append(txt); ul.appendChild(li);
+  });
+
+  /* ---------- chú thích phòng ban (hover để làm nổi bật quy trình của phòng) ---------- */
+  const deptBox = document.getElementById('dept-box'), deptList = document.getElementById('dept-list');
+  const deptCount = {};
+  Object.values(nodes).forEach(n=>{ if (n.dept) deptCount[n.dept] = (deptCount[n.dept]||0) + 1; });
+  Object.keys(deptCount).forEach(d=>{
+    const li = document.createElement('li');
+    li.innerHTML = `<span class="dept-chip" style="--dc:${deptColor(d)}"></span><span></span><small></small>`;
+    li.children[1].textContent = d;
+    li.children[2].textContent = deptCount[d] + ' quy trình';
+    li.addEventListener('mouseenter', ()=>focusDept(d));
+    li.addEventListener('mouseleave', ()=>reset());
+    deptList.appendChild(li);
+  });
+  if (Object.keys(deptCount).length) deptBox.hidden = false;
 
   /* ---------- tương tác ---------- */
-  const infoBox = document.getElementById('info');
-  const infoTitle = document.getElementById('info-title');
-  const infoText = document.getElementById('info-text');
-
+  const infoBox = document.getElementById('info'), infoTitle = document.getElementById('info-title'), infoText = document.getElementById('info-text');
   function focusLane(lane){
     svg.querySelectorAll('[data-lane]').forEach(e=>{
       const l = e.getAttribute('data-lane');
@@ -445,17 +552,25 @@
       e.classList.toggle('live', !!on);
     });
   }
+  function focusDept(d){
+    svg.querySelectorAll('[data-lane]').forEach(e=>{
+      const on = e.getAttribute('data-dept') === d;
+      e.classList.toggle('dim', !on);
+      e.classList.toggle('live', false);
+    });
+    infoBox.style.setProperty('--accent', deptColor(d));
+    infoTitle.textContent = d;
+    infoText.textContent = 'Phụ trách: ' + Object.values(nodes).filter(n=>n.dept===d).map(n=>n.title).join(', ') + '.';
+    infoText.classList.remove('hint');
+  }
   function show(key){
     const n = nodes[key];
     focusLane(n.lane);
-    infoBox.style.setProperty('--accent', n.lane==='all' ? COLOR.report : (key==='manual' ? COLOR.manual : COLOR[n.lane]));
+    const acc = n.lane==='all' ? COLOR.report : n.variant==='manual' ? COLOR.manual : laneColor(n.lane);
+    infoBox.style.setProperty('--accent', acc);
     infoTitle.textContent = n.info[0];
     infoText.textContent = n.info[1];
     infoText.classList.remove('hint');
-  }
-  function openLink(k){
-    const u = nodes[k].url;
-    if (u) window.open(u, '_blank', 'noopener');
   }
   function reset(){
     focusLane(null);
@@ -464,6 +579,7 @@
     infoText.textContent = 'Di chuột hoặc chạm vào một khối trên sơ đồ.';
     infoText.classList.add('hint');
   }
+  const openLink = k => { const u = nodes[k].url; if (u) window.open(u, '_blank', 'noopener'); };
   svg.querySelectorAll('.node').forEach(g=>{
     const k = g.getAttribute('data-key');
     g.addEventListener('mouseenter', ()=>show(k));
@@ -473,8 +589,9 @@
     if (nodes[k].url){ g.setAttribute('role','link'); g.classList.add('linked'); }
   });
   svg.addEventListener('mouseleave', reset);
+
+  window.__DIAGRAM = {CONFIG:C, LABEL_W};   // dùng cho scripts/check_diagram.py
 })();
 </script>
-
 </body>
 </html>
