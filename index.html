@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Luồng dữ liệu – Báo cáo quản trị mua sắm & dự án</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#f4f7fa; --grid:#e2e8ef; --grid-strong:#d3dbe5;
+    --ink:#16263a; --muted:#5d6b7c; --soft:#8a97a8; --line:#dbe2ea;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0}
+  body{
+    background-color:var(--paper);
+    background-image:
+      linear-gradient(var(--grid-strong) 1px,transparent 1px),
+      linear-gradient(90deg,var(--grid-strong) 1px,transparent 1px),
+      linear-gradient(var(--grid) 1px,transparent 1px),
+      linear-gradient(90deg,var(--grid) 1px,transparent 1px);
+    background-size:120px 120px,120px 120px,24px 24px,24px 24px;
+    font-family:'Be Vietnam Pro','Segoe UI',system-ui,sans-serif;
+    color:var(--ink);
+    -webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:1300px;margin:0 auto;padding:36px 24px 56px}
+  header{display:grid;grid-template-columns:1fr auto;gap:24px;align-items:end;margin-bottom:22px}
+  h1{margin:0 0 8px;font-size:30px;line-height:1.15;font-weight:800;letter-spacing:-.02em}
+  .lead{margin:0;color:var(--muted);font-size:15px;line-height:1.55;max-width:62ch}
+  .counts{display:flex;gap:22px;font-size:13px;color:var(--muted)}
+  .counts b{display:block;font-size:26px;font-weight:800;color:var(--ink);line-height:1.1;font-variant-numeric:tabular-nums}
+
+  .board{
+    background:rgba(255,255,255,.82);
+    border:1px solid var(--line);border-radius:22px;
+    box-shadow:0 1px 0 #fff inset,0 18px 40px -24px rgba(22,38,58,.35);
+    padding:10px 10px 4px;overflow-x:auto;
+  }
+  svg#flow{display:block;width:100%;min-width:980px;height:auto;font-family:inherit}
+
+  .bottom{display:grid;grid-template-columns:1fr 1.1fr;gap:16px;margin-top:16px}
+  .legend,.info{background:rgba(255,255,255,.82);border:1px solid var(--line);border-radius:16px;padding:14px 18px}
+  .legend h2,.info h2{margin:0 0 10px;font-size:13px;font-weight:700;color:var(--ink)}
+  .legend ul{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px 18px;font-size:13px;color:#334155}
+  .legend li{display:flex;align-items:center;gap:10px}
+  .sw{flex:none;width:30px;height:16px;border-radius:5px;border:1.5px solid}
+  .sw.svc{background:#fff;border-color:#cbd5e1;box-shadow:inset 0 3px 0 #0284c7}
+  .sw.manual{background:#fff1f2;border:1.5px dashed #e11d48}
+  .sw.new{background:#e0f2fe;border-color:#0284c7;border-radius:9px}
+  .sw.past{background:#f1f5f9;border:1.5px dashed #94a3b8;border-radius:9px}
+  .sw.table{background:#fff;border-color:#4f46e5}
+  .sw.link{background:#fff;border-color:#cbd5e1;position:relative}
+  .sw.link::after{content:"↗";position:absolute;inset:0;display:grid;place-items:center;font-size:11px;color:#64748b;line-height:1}
+  .sw.report{background:linear-gradient(135deg,#123047,#0f5a4c);border-color:#0f5a4c}
+  .info{border-left:5px solid var(--accent,#94a3b8);transition:border-color .25s}
+  .info p{margin:0;font-size:14px;line-height:1.55;color:#334155;min-height:44px}
+  .info .hint{color:var(--soft)}
+
+  /* SVG */
+  .tier-num{font-size:22px;font-weight:800;fill:#c3cdd9}
+  .tier-title{font-size:13.5px;font-weight:700;fill:var(--ink)}
+  .tier-sub{font-size:11.5px;fill:var(--soft)}
+  .lane-title{font-size:13.5px;font-weight:700}
+  .lane-sub{font-size:11.5px;fill:var(--soft)}
+  .n-kicker{font-size:11px;font-weight:600;fill:var(--soft)}
+  .n-title{font-size:14px;font-weight:700;fill:var(--ink)}
+  .n-id{font-size:11px;font-weight:600;fill:#475569;font-variant-numeric:tabular-nums}
+  .n-pill{font-size:12px;font-weight:600}
+  .n-code{font-size:10.5px;fill:var(--muted)}
+  .node{cursor:default;outline:none}
+  .node.linked{cursor:pointer}
+  .node .shape{transition:filter .2s, stroke-width .2s}
+  .node:hover .shape,.node:focus-visible .shape{filter:drop-shadow(0 6px 12px rgba(22,38,58,.18));stroke-width:2.2}
+  .node:focus-visible .shape{stroke:#0f172a}
+  [data-lane]{transition:opacity .3s}
+  .dim{opacity:.16}
+  .flow{stroke-dasharray:6 10;animation:dash 1s linear infinite;opacity:0;transition:opacity .25s}
+  .live .flow{opacity:1}
+  @keyframes dash{to{stroke-dashoffset:-16}}
+  @media (prefers-reduced-motion:reduce){.flow{animation:none}}
+
+  @media (max-width:760px){
+    header{grid-template-columns:1fr}
+    .bottom{grid-template-columns:1fr}
+    .legend ul{grid-template-columns:1fr}
+    h1{font-size:24px}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div>
+      <h1>Luồng dữ liệu báo cáo mua sắm & dự án</h1>
+      <p class="lead">Dữ liệu đi từ các quy trình trên phần mềm Service, được lưu thành 4 bảng và hợp lại thành một báo cáo tổng hợp. Di chuột vào một khối để làm nổi bật đường đi của nhánh đó.</p>
+    </div>
+    <div class="counts">
+      <div><b>4</b>quy trình Service</div>
+      <div><b>4</b>bảng dữ liệu</div>
+      <div><b>1</b>báo cáo tổng hợp</div>
+    </div>
+  </header>
+
+  <div class="board">
+    <svg id="flow" viewBox="0 0 1290 960" role="img" aria-label="Sơ đồ luồng dữ liệu từ phần mềm Service đến báo cáo tổng hợp"></svg>
+  </div>
+
+  <div class="bottom">
+    <section class="legend">
+      <h2>Chú thích</h2>
+      <ul>
+        <li><span class="sw svc"></span>Quy trình trên phần mềm Service</li>
+        <li><span class="sw manual"></span>Dữ liệu nhập thủ công</li>
+        <li><span class="sw new"></span>Dữ liệu mới, cập nhật định kỳ</li>
+        <li><span class="sw past"></span>Dữ liệu quá khứ (Excel cũ)</li>
+        <li><span class="sw table"></span>Bảng dữ liệu đích</li>
+        <li><span class="sw report"></span>Báo cáo tổng hợp</li>
+        <li><span class="sw link"></span>Bấm để mở link</li>
+      </ul>
+    </section>
+    <section class="info" id="info">
+      <h2 id="info-title">Chi tiết</h2>
+      <p id="info-text" class="hint">Di chuột hoặc chạm vào một khối trên sơ đồ.</p>
+    </section>
+  </div>
+</div>
+
+<script>
+(function(){
+  const NS = 'http://www.w3.org/2000/svg';
+  const svg = document.getElementById('flow');
+
+  function el(tag, attrs, parent, text){
+    const e = document.createElementNS(NS, tag);
+    for (const k in (attrs||{})) e.setAttribute(k, attrs[k]);
+    if (text != null) e.textContent = text;
+    (parent || svg).appendChild(e);
+    return e;
+  }
+
+  const COLOR = {
+    mcl:'#0284c7', detail:'#4f46e5', logistic:'#ea580c', delivery:'#c026d3',
+    manual:'#e11d48', past:'#94a3b8', sheet:'#16a34a', bus:'#334155', report:'#0f766e', pbi:'#d4a106'
+  };
+
+  /* ---------- defs ---------- */
+  const defs = el('defs');
+  const g1 = el('linearGradient', {id:'gReport', x1:'0', y1:'0', x2:'1', y2:'1'}, defs);
+  el('stop', {offset:'0', 'stop-color':'#123047'}, g1);
+  el('stop', {offset:'1', 'stop-color':'#0f5a4c'}, g1);
+  const glow = el('filter', {id:'glow', x:'-20%', y:'-30%', width:'140%', height:'170%'}, defs);
+  el('feDropShadow', {dx:'0', dy:'12', stdDeviation:'14', 'flood-color':'#0f5a4c', 'flood-opacity':'.28'}, glow);
+  const soft = el('filter', {id:'soft', x:'-10%', y:'-20%', width:'120%', height:'150%'}, defs);
+  el('feDropShadow', {dx:'0', dy:'3', stdDeviation:'4', 'flood-color':'#16263a', 'flood-opacity':'.08'}, soft);
+  Object.entries(COLOR).forEach(([k,c])=>{
+    const m = el('marker', {id:'arr-'+k, viewBox:'0 0 10 10', refX:'8', refY:'5', markerWidth:'8', markerHeight:'8', orient:'auto', markerUnits:'userSpaceOnUse'}, defs);
+    m.setAttribute('markerWidth','11'); m.setAttribute('markerHeight','11');
+    el('path', {d:'M0,0.5 L10,5 L0,9.5 Z', fill:c}, m);
+  });
+
+  const L = { edges: el('g'), nodes: el('g') };
+
+  /* ---------- nodes (giữ bố cục như sơ đồ gốc) ---------- */
+  const nodes = {
+    svc_mcl:   {type:'service', lane:'mcl', x:180, y:80, w:212, h:84, kicker:'Phần mềm Service', title:'QT2. Lập và duyệt MPR', id:'8438',
+                info:['Lập và duyệt MPR','Quy trình 2 trên phần mềm Service (ID 8438). Phiếu đề nghị mua vật tư (MPR) được lập và phê duyệt tại đây.']},
+    mpr:       {type:'pill', variant:'new', lane:'mcl', x:180, y:190, w:110, h:38, label:'MPR',
+                info:['MPR','Phiếu MPR đã duyệt, lấy ra từ quy trình 2.']},
+    manual:    {type:'pill', variant:'manual', lane:'mcl', x:345, y:190, w:140, h:38, label:'✎ Nhập thủ công',
+                info:['Nhập thủ công','Thông tin bổ sung do người dùng nhập tay, ghép cùng MPR.']},
+    gsheet:    {type:'sheet', lane:'mcl', x:262, y:290, w:220, h:52, title:'Google Sheets', sub:'Sheet 1 + Sheet 2 + …',
+                url:'https://drive.google.com/drive/u/1/folders/1ScC4Om0L7BxcNAET1xst9H6KmyrWX5pQ',
+                info:['Google Sheets','Các file Google Sheets trung gian, gom MPR và dữ liệu nhập tay thành dữ liệu mới cho MCL. Bấm vào khối để mở thư mục Google Drive chứa các file.']},
+    mcl_past:  {type:'pill', variant:'past', lane:'mcl', x:100, y:400, w:136, h:38, label:'Dữ liệu quá khứ',
+                info:['Dữ liệu quá khứ – MCL','Dữ liệu lịch sử từ file Excel cũ, nạp một lần.']},
+    mcl_new:   {type:'pill', variant:'new', lane:'mcl', x:262, y:400, w:136, h:38, label:'Dữ liệu mới',
+                info:['Dữ liệu mới – MCL','Dữ liệu phát sinh mới từ Google Sheets.']},
+    t_mcl:     {type:'table', lane:'mcl', x:181, y:540, w:222, h:64, title:'MCL', code:'MCL_History',
+                info:['MCL','Danh sách kiểm soát vật tư. Gộp dữ liệu quá khứ và dữ liệu mới.']},
+
+    svc_detail:{type:'service', lane:'detail', x:530, y:290, w:212, h:84, kicker:'Phần mềm Service', title:'QT1. Quản lý dự án', id:'7959',
+                info:['Quản lý dự án','Quy trình 1 trên phần mềm Service (ID 7959). Nguồn thông tin chung của từng dự án.']},
+    detail_new:{type:'pill', variant:'new', lane:'detail', x:530, y:400, w:136, h:38, label:'Dữ liệu mới',
+                info:['Dữ liệu mới – Dự án','Lấy trực tiếp từ quy trình Quản lý dự án.']},
+    t_detail:  {type:'table', lane:'detail', x:530, y:540, w:222, h:64, title:'Detail_information', code:'Detail_information_history',
+                info:['Detail_information','Thông tin chi tiết từng dự án; các bảng còn lại nối vào đây theo mã dự án.']},
+
+    svc_log:   {type:'service', lane:'logistic', x:810, y:290, w:212, h:84, kicker:'Phần mềm Service', title:'QT Logistics', id:'42428',
+                info:['Quy trình Logistics','Quy trình trên phần mềm Service (ID 42428). Theo dõi vận chuyển hàng về.']},
+    log_new:   {type:'pill', variant:'new', lane:'logistic', x:810, y:400, w:136, h:38, label:'Dữ liệu mới',
+                info:['Dữ liệu mới – Logistics','Lấy trực tiếp từ quy trình Logistics.']},
+    t_log:     {type:'table', lane:'logistic', x:810, y:540, w:222, h:64, title:'Logistic_input', code:'Logistic_input_History',
+                info:['Logistic_input','Dữ liệu vận chuyển hàng về.']},
+
+    svc_del:   {type:'service', lane:'delivery', x:1170, y:290, w:212, h:84, kicker:'Phần mềm Service', title:'QT Xuất hàng', id:'42450',
+                info:['Quy trình Xuất hàng','Quy trình trên phần mềm Service (ID 42450). Ghi nhận các lần xuất hàng.']},
+    del_past:  {type:'pill', variant:'past', lane:'delivery', x:1008, y:400, w:136, h:38, label:'Dữ liệu quá khứ',
+                info:['Dữ liệu quá khứ – Xuất hàng','Dữ liệu lịch sử từ file Excel cũ, nạp một lần.']},
+    del_new:   {type:'pill', variant:'new', lane:'delivery', x:1170, y:400, w:136, h:38, label:'Dữ liệu mới',
+                info:['Dữ liệu mới – Xuất hàng','Lấy trực tiếp từ quy trình Xuất hàng.']},
+    t_del:     {type:'table', lane:'delivery', x:1089, y:540, w:222, h:64, title:'Delivery', code:'Delivery_History',
+                info:['Delivery','Dữ liệu xuất hàng cho dự án. Gộp dữ liệu quá khứ và dữ liệu mới.']},
+
+    report:    {type:'report', lane:'all', x:635, y:740, w:560, h:150,
+                info:['Báo cáo tổng hợp','Báo cáo quản trị mua sắm & dự án, kết hợp cả 4 bảng dữ liệu.']},
+
+    rpt_raw:   {type:'out', lane:'all', x:455, y:905, w:280, h:72, icon:'sheet', title:'Báo cáo Raw', sub:'Google Sheets',
+                url:'https://docs.google.com/spreadsheets/d/1TykAvsHf0XIGn-W7o3vjpqi-OgMMKya-Vh0Aq2GgCNc/edit?pli=1&gid=1484529016#gid=1484529016',
+                info:['Báo cáo Raw','Bảng dữ liệu thô trên Google Sheets. Bấm vào khối để mở.']},
+    rpt_dash:  {type:'out', lane:'all', x:815, y:905, w:280, h:72, icon:'pbi', title:'Báo cáo Dashboard', sub:'Power BI',
+                url:'https://app.powerbi.com/groups/me/reports/02b46ddb-2f9d-4819-acb9-c734b301fd57/6a73fad09009304900b2?experience=power-bi&bookmarkGuid=e4f058bd2df9cb5423b8',
+                info:['Báo cáo Dashboard','Dashboard trên Power BI. Bấm vào khối để mở.']}
+  };
+
+  // Link phần mềm Service = base + ID quy trình
+  Object.values(nodes).forEach(n=>{
+    if (n.type==='service'){
+      n.url = 'https://service.base.vn/services/' + n.id;
+      n.info[1] += ' Bấm vào khối để mở quy trình trên Service.';
+    }
+  });
+
+  const top = n => [n.x, n.y - n.h/2];
+  const bot = n => [n.x, n.y + n.h/2];
+
+  /* ---------- edges: chỉ đường thẳng góc vuông ---------- */
+  function roundedPath(pts, r){
+    let d = `M${pts[0][0]},${pts[0][1]}`;
+    for (let i=1;i<pts.length-1;i++){
+      const [x0,y0]=pts[i-1], [x1,y1]=pts[i], [x2,y2]=pts[i+1];
+      const d1 = Math.min(r, Math.hypot(x1-x0,y1-y0)/2), d2 = Math.min(r, Math.hypot(x2-x1,y2-y1)/2);
+      const ax = x1 - Math.sign(x1-x0)*d1, ay = y1 - Math.sign(y1-y0)*d1;
+      const bx = x1 + Math.sign(x2-x1)*d2, by = y1 + Math.sign(y2-y1)*d2;
+      d += ` L${ax},${ay} Q${x1},${y1} ${bx},${by}`;
+    }
+    const last = pts[pts.length-1];
+    return d + ` L${last[0]},${last[1]}`;
+  }
+  function route(A, B, ym){
+    const [x1,y1] = bot(A), [x2,y2t] = top(B), y2 = y2t - 2;
+    if (Math.abs(x1-x2) < 0.5) return [[x1,y1],[x2,y2]];
+    return [[x1,y1],[x1,ym],[x2,ym],[x2,y2]];
+  }
+  function drawEdge(pts, colorKey, lane, opts={}){
+    const c = COLOR[colorKey];
+    const g = el('g', {'data-lane':lane, class:'edge'}, L.edges);
+    const d = roundedPath(pts, 12);
+    const p = el('path', {d, fill:'none', stroke:c, 'stroke-width':2.2, 'stroke-linejoin':'round'}, g);
+    if (opts.arrow !== false) p.setAttribute('marker-end', `url(#arr-${colorKey})`);
+    if (opts.dash) p.setAttribute('stroke-dasharray', opts.dash);
+    el('path', {d, fill:'none', stroke:'#fff', 'stroke-width':2.2, 'stroke-opacity':.85, class:'flow'}, g);
+    return g;
+  }
+
+  const E = (a,b,ym)=>{
+    const A=nodes[a], B=nodes[b];
+    const key = A.variant==='past' ? 'past' : (a==='manual' ? 'manual' : A.lane);
+    drawEdge(route(A,B,ym), key, A.lane, A.variant==='past' ? {dash:'6 4'} : {});
+  };
+
+  // Nhánh MCL
+  E('svc_mcl','mpr');
+  E('mpr','gsheet',238);
+  E('manual','gsheet',238);
+  E('gsheet','mcl_new');
+  E('mcl_past','t_mcl',465);
+  E('mcl_new','t_mcl',465);
+  // Nhánh Dự án / Logistics
+  E('svc_detail','detail_new'); E('detail_new','t_detail');
+  E('svc_log','log_new');       E('log_new','t_log');
+  // Nhánh Xuất hàng
+  E('svc_del','del_new');
+  E('del_past','t_del',465);
+  E('del_new','t_del',465);
+
+  // Gom 4 bảng vào báo cáo qua một đường trục
+  const BUS = 625, R = nodes.report;
+  ['t_mcl','t_detail','t_log','t_del'].forEach(k=>{
+    const n = nodes[k], [x,y] = bot(n);
+    const g = drawEdge([[x,y],[x,BUS]], n.lane, n.lane, {arrow:false});
+    el('circle', {cx:x, cy:BUS, r:4.5, fill:COLOR[n.lane], stroke:'#fff', 'stroke-width':1.5}, g);
+  });
+  const busG = el('g', {'data-lane':'all'}, L.edges);
+  el('path', {d:`M${nodes.t_mcl.x},${BUS} L${nodes.t_del.x},${BUS}`, stroke:COLOR.bus, 'stroke-width':2.6, fill:'none', 'stroke-linecap':'round'}, busG);
+  el('path', {d:`M${R.x},${BUS} L${R.x},${R.y-R.h/2-2}`, stroke:COLOR.bus, 'stroke-width':2.6, fill:'none', 'marker-end':'url(#arr-bus)'}, busG);
+  el('path', {d:`M${R.x},${BUS} L${R.x},${R.y-R.h/2-2}`, stroke:'#fff', 'stroke-width':2.6, 'stroke-opacity':.85, fill:'none', class:'flow'}, busG);
+
+  ['rpt_raw','rpt_dash'].forEach(k=>{
+    const B = nodes[k];
+    drawEdge(route(R, B, 855), 'bus', 'all');
+  });
+
+  /* ---------- node drawers ---------- */
+  function nodeGroup(key, n){
+    return el('g', {class:'node', 'data-lane':n.lane, 'data-key':key, tabindex:'0', role:'button', 'aria-label':n.info[0]}, L.nodes);
+  }
+  function linkIcon(g, x, y, c){
+    const ic = el('g', {transform:`translate(${x},${y})`, fill:'none', stroke:c, 'stroke-width':1.6, 'stroke-linecap':'round', 'stroke-linejoin':'round'}, g);
+    el('path', {d:'M9,1 H13 V5'}, ic);
+    el('path', {d:'M13,1 L7,7'}, ic);
+    el('path', {d:'M11,8.5 V12 a1,1 0 0 1 -1,1 H2 a1,1 0 0 1 -1,-1 V4 a1,1 0 0 1 1,-1 H5.5'}, ic);
+  }
+  function drawOut(key, n){
+    const x = n.x-n.w/2, y = n.y-n.h/2, g = nodeGroup(key,n);
+    const c = n.icon==='pbi' ? COLOR.pbi : COLOR.sheet;
+    el('rect', {class:'shape', x, y, width:n.w, height:n.h, rx:14, fill:'#fff', stroke:c, 'stroke-width':1.7, filter:'url(#soft)'}, g);
+    const ix = x+20, iy = n.y-16;
+    if (n.icon==='sheet'){
+      el('rect', {x:ix, y:iy, width:26, height:32, rx:4, fill:c}, g);
+      el('rect', {x:ix+5, y:iy+10, width:16, height:15, fill:'none', stroke:'#fff', 'stroke-width':1.5}, g);
+      el('line', {x1:ix+13, x2:ix+13, y1:iy+10, y2:iy+25, stroke:'#fff', 'stroke-width':1.5}, g);
+      el('line', {x1:ix+5, x2:ix+21, y1:iy+17.5, y2:iy+17.5, stroke:'#fff', 'stroke-width':1.5}, g);
+    } else {
+      el('rect', {x:ix, y:iy, width:30, height:32, rx:6, fill:'#fdf6dc'}, g);
+      [[5,16,'#e8b70a'],[12,10,'#d4a106'],[19,4,'#b88a00']].forEach(([dx,dy,f])=>{
+        el('rect', {x:ix+dx, y:iy+dy, width:6, height:28-dy, rx:1.5, fill:f}, g);
+      });
+    }
+    el('text', {x:ix+44, y:n.y-2, class:'n-title', style:'font-size:15px'}, g, n.title);
+    el('text', {x:ix+44, y:n.y+16, class:'n-code', style:'font-size:11.5px'}, g, n.sub + ' – bấm để mở');
+    linkIcon(g, x+n.w-30, y+12, '#64748b');
+  }
+  function drawService(key, n){
+    const c = COLOR[n.lane], x = n.x-n.w/2, y = n.y-n.h/2, g = nodeGroup(key,n);
+    el('rect', {class:'shape', x, y, width:n.w, height:n.h, rx:14, fill:'#fff', stroke:'#cdd6e1', 'stroke-width':1.4, filter:'url(#soft)'}, g);
+    el('rect', {x:x+18, y:y-1.5, width:n.w-36, height:4, rx:2, fill:c}, g);
+    el('text', {x:n.x, y:y+25, 'text-anchor':'middle', class:'n-kicker'}, g, n.kicker);
+    el('text', {x:n.x, y:y+46, 'text-anchor':'middle', class:'n-title'}, g, n.title);
+    const label = 'ID ' + n.id, cw = 22 + label.length*6.4;
+    el('rect', {x:n.x-cw/2, y:y+55, width:cw, height:19, rx:6, fill:c, 'fill-opacity':.1}, g);
+    el('text', {x:n.x, y:y+68.5, 'text-anchor':'middle', class:'n-id', style:'fill:'+c}, g, label);
+    linkIcon(g, x+n.w-24, y+10, '#94a3b8');
+  }
+  function drawPill(key, n){
+    const x = n.x-n.w/2, y = n.y-n.h/2, g = nodeGroup(key,n);
+    let fill, stroke, dash, txt;
+    if (n.variant==='new'){ const c=COLOR[n.lane]; fill=c; stroke=c; txt=c; }
+    if (n.variant==='past'){ fill='#94a3b8'; stroke='#94a3b8'; dash='4 3'; txt='#475569'; }
+    if (n.variant==='manual'){ fill=COLOR.manual; stroke=COLOR.manual; dash='4 3'; txt=COLOR.manual; }
+    el('rect', {x, y, width:n.w, height:n.h, rx:n.h/2, fill:'#fff'}, g);
+    const r = el('rect', {class:'shape', x, y, width:n.w, height:n.h, rx:n.h/2, fill, 'fill-opacity':.1, stroke, 'stroke-width':1.5}, g);
+    if (dash) r.setAttribute('stroke-dasharray', dash);
+    el('text', {x:n.x, y:n.y+4.5, 'text-anchor':'middle', class:'n-pill', fill:txt}, g, n.label);
+  }
+  function drawSheet(key, n){
+    const c = COLOR.sheet, x = n.x-n.w/2, y = n.y-n.h/2, g = nodeGroup(key,n);
+    el('rect', {class:'shape', x, y, width:n.w, height:n.h, rx:12, fill:'#fff', stroke:c, 'stroke-width':1.5, filter:'url(#soft)'}, g);
+    const ix = x+18, iy = n.y-12;
+    el('rect', {x:ix, y:iy, width:20, height:24, rx:3, fill:c}, g);
+    el('rect', {x:ix+4, y:iy+8, width:12, height:11, fill:'none', stroke:'#fff', 'stroke-width':1.3}, g);
+    el('line', {x1:ix+10, x2:ix+10, y1:iy+8, y2:iy+19, stroke:'#fff', 'stroke-width':1.3}, g);
+    el('line', {x1:ix+4, x2:ix+16, y1:iy+13.5, y2:iy+13.5, stroke:'#fff', 'stroke-width':1.3}, g);
+    el('text', {x:x+50, y:n.y-2, class:'n-title', style:'font-size:13.5px'}, g, n.title);
+    el('text', {x:x+50, y:n.y+14, class:'n-code', style:'font-size:11px'}, g, n.sub);
+    linkIcon(g, x+n.w-24, y+8, '#94a3b8');
+  }
+  function drawTable(key, n){
+    const c = COLOR[n.lane], x = n.x-n.w/2, y = n.y-n.h/2, g = nodeGroup(key,n);
+    el('rect', {class:'shape', x, y, width:n.w, height:n.h, rx:12, fill:'#fff', stroke:c, 'stroke-width':1.7, filter:'url(#soft)'}, g);
+    const cx = x+27, cy = n.y-10;
+    el('path', {d:`M${cx-10},${cy} v18 a10,4 0 0 0 20,0 v-18`, fill:c, 'fill-opacity':.14, stroke:c, 'stroke-width':1.5}, g);
+    el('path', {d:`M${cx-10},${cy+9} a10,4 0 0 0 20,0`, fill:'none', stroke:c, 'stroke-width':1.5}, g);
+    el('ellipse', {cx, cy, rx:10, ry:4, fill:'#fff', stroke:c, 'stroke-width':1.5}, g);
+    el('text', {x:x+46, y:n.y-3, class:'n-title'}, g, n.title);
+    el('text', {x:x+46, y:n.y+14, class:'n-code'}, g, n.code);
+  }
+  function drawReport(key, n){
+    const x = n.x-n.w/2, y = n.y-n.h/2, g = nodeGroup(key,n);
+    el('rect', {class:'shape', x, y, width:n.w, height:n.h, rx:22, fill:'url(#gReport)', stroke:'#0f5a4c', 'stroke-width':1, filter:'url(#glow)'}, g);
+    el('circle', {cx:x+n.w-40, cy:y+30, r:70, fill:'none', stroke:'#fff', 'stroke-opacity':.06, 'stroke-width':18}, g);
+    const ix = n.x-92, iy = y+30;
+    [[0,14],[9,8],[18,0]].forEach(([dx,dy],i)=>{
+      el('rect', {x:ix+dx, y:iy+dy, width:6, height:24-dy, rx:1.5, fill:'#6ee7b7', 'fill-opacity':.65+i*.15}, g);
+    });
+    el('text', {x:n.x+14, y:y+52, 'text-anchor':'middle', fill:'#fff', style:'font-size:27px;font-weight:800;letter-spacing:-.01em'}, g, 'Báo cáo');
+    el('text', {x:n.x, y:y+80, 'text-anchor':'middle', fill:'#cfe7e1', style:'font-size:13.5px'}, g, 'Báo cáo tổng hợp quản trị mua sắm & dự án');
+    const chips = [['MCL','mcl'],['Detail_information','detail'],['Logistic_input','logistic'],['Delivery','delivery']];
+    const widths = chips.map(([t])=>t.length*6.8+32), gap = 10;
+    let cx = n.x - (widths.reduce((a,b)=>a+b,0) + gap*(chips.length-1))/2;
+    chips.forEach(([t,l],i)=>{
+      const w = widths[i];
+      el('rect', {x:cx, y:y+100, width:w, height:26, rx:13, fill:'#fff', 'fill-opacity':.1, stroke:'#fff', 'stroke-opacity':.18}, g);
+      el('circle', {cx:cx+13, cy:y+113, r:4, fill:COLOR[l]}, g);
+      el('text', {x:cx+22, y:y+117, fill:'#e6f4f1', style:'font-size:11.5px;font-weight:600'}, g, t);
+      cx += w + gap;
+    });
+  }
+  const drawers = {service:drawService, pill:drawPill, sheet:drawSheet, table:drawTable, report:drawReport, out:drawOut};
+  Object.entries(nodes).forEach(([k,n])=>drawers[n.type](k,n));
+
+  /* ---------- tương tác ---------- */
+  const infoBox = document.getElementById('info');
+  const infoTitle = document.getElementById('info-title');
+  const infoText = document.getElementById('info-text');
+
+  function focusLane(lane){
+    svg.querySelectorAll('[data-lane]').forEach(e=>{
+      const l = e.getAttribute('data-lane');
+      const on = lane && (lane==='all' || l===lane || l==='all');
+      e.classList.toggle('dim', !!lane && !on);
+      e.classList.toggle('live', !!on);
+    });
+  }
+  function show(key){
+    const n = nodes[key];
+    focusLane(n.lane);
+    infoBox.style.setProperty('--accent', n.lane==='all' ? COLOR.report : (key==='manual' ? COLOR.manual : COLOR[n.lane]));
+    infoTitle.textContent = n.info[0];
+    infoText.textContent = n.info[1];
+    infoText.classList.remove('hint');
+  }
+  function openLink(k){
+    const u = nodes[k].url;
+    if (u) window.open(u, '_blank', 'noopener');
+  }
+  function reset(){
+    focusLane(null);
+    infoBox.style.removeProperty('--accent');
+    infoTitle.textContent = 'Chi tiết';
+    infoText.textContent = 'Di chuột hoặc chạm vào một khối trên sơ đồ.';
+    infoText.classList.add('hint');
+  }
+  svg.querySelectorAll('.node').forEach(g=>{
+    const k = g.getAttribute('data-key');
+    g.addEventListener('mouseenter', ()=>show(k));
+    g.addEventListener('focus', ()=>show(k));
+    g.addEventListener('click', ()=>{ show(k); openLink(k); });
+    g.addEventListener('keydown', ev=>{ if (ev.key==='Enter') openLink(k); });
+    if (nodes[k].url){ g.setAttribute('role','link'); g.classList.add('linked'); }
+  });
+  svg.addEventListener('mouseleave', reset);
+})();
+</script>
+
+</body>
+</html>
