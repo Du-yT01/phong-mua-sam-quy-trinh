@@ -147,10 +147,12 @@
 const CONFIG = {
   title: 'Luồng dữ liệu báo cáo mua sắm & dự án',
   lead:  'Từ phần mềm Service, qua kho dữ liệu, ra báo cáo. Di chuột vào một khối để làm nổi bật nhánh của nó.',
-  counts: [[4,'quy trình Service'], [4,'bảng dữ liệu'], [2,'báo cáo tổng hợp']],
+  counts: [[5,'quy trình Service'], [4,'bảng dữ liệu'], [2,'báo cáo tổng hợp']],
 
-  // Vùng vẽ (không tính dải nhãn tầng 100px bên trái, engine tự thêm)
+  // Vùng vẽ. width chỉ là giá trị khởi đầu: engine tự dời node và tính lại width
+  // để lề trái = lề phải. height thì phải đặt đúng (tầng cuối y1 + 8).
   width: 1290, height: 1008,
+  autoCenter: true,   // tự dời node để khoảng trống trái/phải trong khung tầng bằng nhau
 
   // Link mặc định cho node type 'service' = serviceBaseUrl + id
   serviceBaseUrl: 'https://service.base.vn/services/',
@@ -187,52 +189,55 @@ const CONFIG = {
      out     : báo cáo đầu ra có link (title, sub, icon = 'sheet' | 'pbi' | 'doc', url)
      Mọi node: lane, x, y, w, h, info:[tiêu đề, mô tả], url (tuỳ chọn)              */
   nodes: {
-    svc_mcl:   {type:'service', lane:'mcl', x:180, y:80, w:212, h:108, kicker:'Phần mềm Service', title:'QT2. Lập và duyệt MPR', id:'8438', dept:'Phòng Thiết Kế',
+    svc_mcl:   {type:'service', lane:'mcl', x:160, y:80, w:212, h:108, kicker:'Phần mềm Service', title:'QT2. Lập và duyệt MPR', id:'8438', dept:'Phòng Thiết Kế',
                 info:['Lập và duyệt MPR','Quy trình 2 trên phần mềm Service (ID 8438). Phiếu đề nghị mua vật tư (MPR) được lập và phê duyệt tại đây.']},
-    mpr:       {type:'pill', variant:'new', lane:'mcl', x:180, y:190, w:110, h:38, label:'MPR',
+    svc_mpr_init:{type:'service', lane:'mcl', x:420, y:80, w:236, h:108, kicker:'Phần mềm Service', title:'1. Khởi tạo & phân công MPR', id:'7562', dept:'Phòng Mua Hàng',
+                url:'https://service.base.vn/services/7562',
+                info:['Khởi tạo & phân công MPR','Quy trình trên phần mềm Service (ID 7562). Khởi tạo và phân công MPR, đổ dữ liệu vào MPR cùng quy trình Lập và duyệt MPR.']},
+    mpr:       {type:'pill', variant:'new', lane:'mcl', x:290, y:190, w:110, h:38, label:'MPR',
                 info:['MPR','Phiếu MPR đã duyệt, lấy ra từ quy trình 2.']},
-    manual:    {type:'pill', variant:'manual', lane:'mcl', x:345, y:190, w:140, h:38, label:'✎ Nhập thủ công',
+    manual:    {type:'pill', variant:'manual', lane:'mcl', x:440, y:190, w:140, h:38, label:'✎ Nhập thủ công',
                 info:['Nhập thủ công','Thông tin bổ sung do người dùng nhập tay, ghép cùng MPR.']},
-    gsheet:    {type:'sheet', lane:'mcl', x:262, y:290, w:220, h:52, title:'Google Sheets', sub:'Sheet 1 + Sheet 2 + …',
+    gsheet:    {type:'sheet', lane:'mcl', x:365, y:290, w:220, h:52, title:'Google Sheets', sub:'Sheet 1 + Sheet 2 + …',
                 url:'https://drive.google.com/drive/u/1/folders/1ScC4Om0L7BxcNAET1xst9H6KmyrWX5pQ',
                 info:['Google Sheets','Các file Google Sheets trung gian, gom MPR và dữ liệu nhập tay thành dữ liệu mới cho MCL.']},
-    mcl_past:  {type:'pill', variant:'past', lane:'mcl', x:100, y:400, w:136, h:38, label:'Dữ liệu quá khứ',
+    mcl_past:  {type:'pill', variant:'past', lane:'mcl', x:203, y:400, w:136, h:38, label:'Dữ liệu quá khứ',
                 info:['Dữ liệu quá khứ – MCL','Dữ liệu lịch sử từ file Excel cũ, nạp một lần.']},
-    mcl_new:   {type:'pill', variant:'new', lane:'mcl', x:262, y:400, w:136, h:38, label:'Dữ liệu mới',
+    mcl_new:   {type:'pill', variant:'new', lane:'mcl', x:365, y:400, w:136, h:38, label:'Dữ liệu mới',
                 info:['Dữ liệu mới – MCL','Dữ liệu phát sinh mới từ Google Sheets.']},
-    t_mcl:     {type:'table', lane:'mcl', x:181, y:540, w:222, h:64, title:'MCL', code:'MCL_History',
+    t_mcl:     {type:'table', lane:'mcl', x:284, y:540, w:222, h:64, title:'MCL', code:'MCL_History',
                 info:['MCL','Danh sách kiểm soát vật tư. Gộp dữ liệu quá khứ và dữ liệu mới.']},
 
-    svc_detail:{type:'service', lane:'detail', x:530, y:286, w:212, h:108, kicker:'Phần mềm Service', title:'QT1. Quản lý dự án', id:'7959', dept:'Ban Quản Lý Dự Án',
+    svc_detail:{type:'service', lane:'detail', x:600, y:286, w:212, h:108, kicker:'Phần mềm Service', title:'QT1. Quản lý dự án', id:'7959', dept:'Ban Quản Lý Dự Án',
                 info:['Quản lý dự án','Quy trình 1 trên phần mềm Service (ID 7959). Nguồn thông tin chung của từng dự án.']},
-    detail_new:{type:'pill', variant:'new', lane:'detail', x:530, y:400, w:136, h:38, label:'Dữ liệu mới',
+    detail_new:{type:'pill', variant:'new', lane:'detail', x:600, y:400, w:136, h:38, label:'Dữ liệu mới',
                 info:['Dữ liệu mới – Dự án','Lấy trực tiếp từ quy trình Quản lý dự án.']},
-    t_detail:  {type:'table', lane:'detail', x:530, y:540, w:222, h:64, title:'Detail_information', code:'Detail_information_history',
+    t_detail:  {type:'table', lane:'detail', x:600, y:540, w:222, h:64, title:'Detail_information', code:'Detail_information_history',
                 info:['Detail_information','Thông tin chi tiết từng dự án; các bảng còn lại nối vào đây theo mã dự án.']},
 
-    svc_log:   {type:'service', lane:'logistic', x:810, y:286, w:212, h:108, kicker:'Phần mềm Service', title:'QT Logistics', id:'42428', dept:'Phòng Mua Hàng',
+    svc_log:   {type:'service', lane:'logistic', x:880, y:286, w:212, h:108, kicker:'Phần mềm Service', title:'QT Logistics', id:'42428', dept:'Phòng Mua Hàng',
                 info:['Quy trình Logistics','Quy trình trên phần mềm Service (ID 42428). Theo dõi vận chuyển hàng về.']},
-    log_new:   {type:'pill', variant:'new', lane:'logistic', x:810, y:400, w:136, h:38, label:'Dữ liệu mới',
+    log_new:   {type:'pill', variant:'new', lane:'logistic', x:880, y:400, w:136, h:38, label:'Dữ liệu mới',
                 info:['Dữ liệu mới – Logistics','Lấy trực tiếp từ quy trình Logistics.']},
-    t_log:     {type:'table', lane:'logistic', x:810, y:540, w:222, h:64, title:'Logistic_input', code:'Logistic_input_History',
+    t_log:     {type:'table', lane:'logistic', x:880, y:540, w:222, h:64, title:'Logistic_input', code:'Logistic_input_History',
                 info:['Logistic_input','Dữ liệu vận chuyển hàng về.']},
 
-    svc_del:   {type:'service', lane:'delivery', x:1170, y:286, w:212, h:108, kicker:'Phần mềm Service', title:'QT Xuất hàng', id:'42450', dept:'Phòng Mua Hàng',
+    svc_del:   {type:'service', lane:'delivery', x:1240, y:286, w:212, h:108, kicker:'Phần mềm Service', title:'QT Xuất hàng', id:'42450', dept:'Phòng Mua Hàng',
                 info:['Quy trình Xuất hàng','Quy trình trên phần mềm Service (ID 42450). Ghi nhận các lần xuất hàng.']},
-    del_past:  {type:'pill', variant:'past', lane:'delivery', x:1008, y:400, w:136, h:38, label:'Dữ liệu quá khứ',
+    del_past:  {type:'pill', variant:'past', lane:'delivery', x:1078, y:400, w:136, h:38, label:'Dữ liệu quá khứ',
                 info:['Dữ liệu quá khứ – Xuất hàng','Dữ liệu lịch sử từ file Excel cũ, nạp một lần.']},
-    del_new:   {type:'pill', variant:'new', lane:'delivery', x:1170, y:400, w:136, h:38, label:'Dữ liệu mới',
+    del_new:   {type:'pill', variant:'new', lane:'delivery', x:1240, y:400, w:136, h:38, label:'Dữ liệu mới',
                 info:['Dữ liệu mới – Xuất hàng','Lấy trực tiếp từ quy trình Xuất hàng.']},
-    t_del:     {type:'table', lane:'delivery', x:1089, y:540, w:222, h:64, title:'Delivery', code:'Delivery_History',
+    t_del:     {type:'table', lane:'delivery', x:1159, y:540, w:222, h:64, title:'Delivery', code:'Delivery_History',
                 info:['Delivery','Dữ liệu xuất hàng cho dự án. Gộp dữ liệu quá khứ và dữ liệu mới.']},
 
-    report:    {type:'report', lane:'all', x:635, y:740, w:560, h:150, title:'Báo cáo', sub:'Báo cáo tổng hợp quản trị mua sắm & dự án',
+    report:    {type:'report', lane:'all', x:721, y:740, w:560, h:150, title:'Báo cáo', sub:'Báo cáo tổng hợp quản trị mua sắm & dự án',
                 info:['Báo cáo tổng hợp','Báo cáo quản trị mua sắm & dự án, kết hợp cả 4 bảng dữ liệu.']},
 
-    rpt_raw:   {type:'out', lane:'all', x:455, y:905, w:280, h:72, icon:'sheet', title:'Báo cáo Raw', sub:'Google Sheets',
+    rpt_raw:   {type:'out', lane:'all', x:541, y:905, w:280, h:72, icon:'sheet', title:'Báo cáo Raw', sub:'Google Sheets',
                 url:'https://docs.google.com/spreadsheets/d/1TykAvsHf0XIGn-W7o3vjpqi-OgMMKya-Vh0Aq2GgCNc/edit?pli=1&gid=1484529016#gid=1484529016',
                 info:['Báo cáo Raw','Bảng dữ liệu thô trên Google Sheets.']},
-    rpt_dash:  {type:'out', lane:'all', x:815, y:905, w:280, h:72, icon:'pbi', title:'Báo cáo Dashboard', sub:'Power BI',
+    rpt_dash:  {type:'out', lane:'all', x:901, y:905, w:280, h:72, icon:'pbi', title:'Báo cáo Dashboard', sub:'Power BI',
                 url:'https://app.powerbi.com/groups/me/reports/02b46ddb-2f9d-4819-acb9-c734b301fd57/6a73fad09009304900b2?experience=power-bi&bookmarkGuid=e4f058bd2df9cb5423b8',
                 info:['Báo cáo Dashboard','Dashboard trên Power BI.']}
   },
@@ -241,9 +246,10 @@ const CONFIG = {
      via = cao độ y của đoạn ngang khi 2 node lệch cột.
      Các nguồn cùng gộp vào 1 node đích PHẢI dùng chung via.                       */
   edges: [
-    {from:'svc_mcl', to:'mpr'},
-    {from:'mpr', to:'gsheet', via:238},
-    {from:'manual', to:'gsheet', via:238},
+    {from:'svc_mcl', to:'mpr', via:152},
+    {from:'svc_mpr_init', to:'mpr', via:152},
+    {from:'mpr', to:'gsheet', via:236},
+    {from:'manual', to:'gsheet', via:236},
     {from:'gsheet', to:'mcl_new'},
     {from:'mcl_past', to:'t_mcl', via:465},
     {from:'mcl_new', to:'t_mcl', via:465},
@@ -271,6 +277,17 @@ const CONFIG = {
   const svg = document.getElementById('flow');
   const C = CONFIG, nodes = C.nodes;
   const LABEL_W = 100;   // dải nhãn tầng bên trái
+  const PAD_X = 32;      // lề trái = lề phải giữa khung tầng và node ngoài cùng
+
+  /* ---------- tự căn ngang: lề trái và lề phải luôn bằng nhau ---------- */
+  (function autoFitX(){
+    const list = Object.values(nodes);
+    const minX = Math.min(...list.map(n=>n.x - n.w/2));
+    const maxX = Math.max(...list.map(n=>n.x + n.w/2));
+    const dx = (PAD_X - 30) - minX;          // mép trong dải nhãn nằm ở x = -30
+    list.forEach(n=>{ n.x += dx; });
+    C.width = Math.round(maxX + dx + PAD_X + 8);
+  })();
 
   function el(tag, attrs, parent, text){
     const e = document.createElementNS(NS, tag);
@@ -344,6 +361,15 @@ const CONFIG = {
     if (n.dept) n.info = [n.info[0], (n.info[1] ? n.info[1] + ' ' : '') + 'Phòng thực hiện: ' + n.dept + '.'];
     if (n.url) n.info = [n.info[0], (n.info[1] ? n.info[1] + ' ' : '') + 'Bấm vào khối để mở link.'];
   });
+  /* ---------- tự căn giữa nội dung trong khung tầng ----------
+     Vùng nội dung nằm giữa mép phải dải nhãn tầng (x = -30) và mép phải khung tầng (x = width - 8).
+     Dời toàn bộ node theo chiều ngang để khoảng trống hai bên bằng nhau. Tắt bằng autoCenter:false. */
+  if (C.autoCenter !== false){
+    const all = Object.values(nodes);
+    const minX = Math.min(...all.map(n=>n.x - n.w/2)), maxX = Math.max(...all.map(n=>n.x + n.w/2));
+    const dx = Math.round(((-30) + (C.width - 8) - (minX + maxX)) / 2);
+    if (dx) all.forEach(n=>{ n.x += dx; });
+  }
   const top = n => [n.x, n.y - n.h/2];
   const bot = n => [n.x, n.y + n.h/2];
 
