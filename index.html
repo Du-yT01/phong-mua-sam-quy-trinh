@@ -106,6 +106,98 @@
     h1{font-size:24px}
   }
   .sw.out{background:#fff;border-color:#d4a106;border-radius:6px}
+
+  /* =================== TRANG HƯỚNG DẪN (#huong-dan) =================== */
+  body.guide-mode .wrap{display:none}
+  #guide{display:none}
+  body.guide-mode #guide{display:grid}
+  #guide{max-width:1180px;margin:0 auto;padding:28px 24px 64px;grid-template-columns:220px minmax(0,1fr);gap:32px;align-items:start}
+  .g-toc{position:sticky;top:20px;font-size:13.5px}
+  .g-toc .g-back{display:inline-flex;align-items:center;gap:6px;color:var(--muted);text-decoration:none;font-weight:600;margin-bottom:18px}
+  .g-toc .g-back:hover{color:var(--ink)}
+  .g-toc .g-back{background:#fff;border:1.5px solid var(--line);border-radius:10px;padding:8px 14px;color:var(--ink)}
+  .g-toc .g-back:hover{border-color:#0f766e;color:#0f766e}
+  .g-back-btn{display:inline-flex;align-items:center;gap:6px;background:#0f766e;color:#fff;text-decoration:none;font-weight:700;border-radius:10px;padding:11px 20px;font-size:14px}
+  .g-back-btn:hover{background:#115e59}
+  .g-toc ol{list-style:none;margin:0;padding:0;border-left:2px solid var(--line)}
+  .g-toc li a{display:block;padding:6px 0 6px 14px;margin-left:-2px;border-left:2px solid transparent;color:var(--muted);text-decoration:none;line-height:1.4}
+  .g-toc li a:hover{color:var(--ink);border-left-color:#94a3b8}
+  .g-main{min-width:0}
+  .g-main h1{font-size:28px;margin:0 0 6px;white-space:normal}
+  .g-main > p.lead{max-width:70ch;margin-bottom:22px}
+  .g-links{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin:0 0 34px}
+  .g-link{display:flex;gap:14px;align-items:center;background:#fff;border:1.5px solid var(--line);border-radius:14px;padding:14px 16px;text-decoration:none;color:var(--ink);transition:border-color .2s,box-shadow .2s}
+  .g-link:hover{border-color:#16a34a;box-shadow:0 8px 20px -14px rgba(22,38,58,.4)}
+  .g-link b{display:block;font-size:14.5px}
+  .g-link span{font-size:12.5px;color:var(--muted)}
+  .g-link i{flex:none;width:36px;height:36px;border-radius:9px;display:grid;place-items:center;font-style:normal;font-size:18px;color:#fff}
+  .g-link .arrow{margin-left:auto;color:#94a3b8;font-size:18px}
+  .g-sec{background:rgba(255,255,255,.88);border:1px solid var(--line);border-radius:18px;padding:24px 28px;margin-bottom:22px;scroll-margin-top:16px}
+  .g-sec h2{font-size:20px;margin:0 0 4px;letter-spacing:-.01em}
+  .g-sec h2 small{display:block;font-size:13px;font-weight:500;color:var(--muted);margin-top:4px;letter-spacing:0}
+  .g-sec h3{font-size:15.5px;margin:22px 0 8px}
+  .g-sec p,.g-sec li{font-size:14.5px;line-height:1.65;color:#2b3a4d}
+  .g-sec ul{padding-left:20px;margin:6px 0}
+  .kbd{display:inline-block;padding:1px 7px;border:1px solid #cbd5e1;border-bottom-width:2px;border-radius:6px;background:#fff;font-size:12.5px;font-weight:600;white-space:nowrap}
+  .ui{font-weight:700;color:#0f172a;background:#eef2f7;border-radius:5px;padding:1px 6px;white-space:nowrap}
+  .flowline{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin:14px 0 4px}
+  .flowline span{background:#fff;border:1.5px solid #cbd5e1;border-radius:10px;padding:7px 12px;font-size:13.5px;font-weight:600}
+  .flowline span.hl{border-color:#0f766e;color:#0f766e;background:#f0fdfa}
+  .flowline em{font-style:normal;color:#94a3b8;font-weight:700}
+  .step{display:grid;grid-template-columns:34px minmax(0,1fr);gap:14px;margin-top:22px}
+  .step > .num{width:30px;height:30px;border-radius:50%;background:#0f766e;color:#fff;display:grid;place-items:center;font-weight:800;font-size:14px}
+  .step h4{margin:4px 0 6px;font-size:15.5px}
+  .note{border-left:4px solid #d4a106;background:#fffbeb;border-radius:0 10px 10px 0;padding:10px 14px;margin:12px 0;font-size:14px;line-height:1.6;color:#422006}
+  .note.ok{border-color:#16a34a;background:#f0fdf4;color:#14532d}
+  .note.bad{border-color:#e11d48;background:#fff1f2;color:#4c0519}
+  table.g-tbl{width:100%;border-collapse:collapse;font-size:13.5px;margin:10px 0}
+  table.g-tbl th,table.g-tbl td{border-bottom:1px solid var(--line);padding:8px 10px;text-align:left;vertical-align:top;line-height:1.5}
+  table.g-tbl th{background:#f6f8fb;font-weight:700;color:#334155}
+  .tag{display:inline-block;font-size:11.5px;font-weight:700;border-radius:999px;padding:2px 9px;white-space:nowrap}
+  .tag.auto{background:#e0f2fe;color:#075985}.tag.hand{background:#fef3c7;color:#92400e}.tag.script{background:#dcfce7;color:#166534}
+
+  /* ---- ảnh minh hoạ giao diện Google Trang tính ---- */
+  figure.mock{margin:14px 0 6px}
+  figure.mock figcaption{font-size:12.5px;color:var(--soft);margin-top:6px}
+  .mw{border:1px solid #cfd6df;border-radius:12px;overflow:hidden;background:#fff;box-shadow:0 10px 26px -18px rgba(22,38,58,.45);font-family:Arial,'Be Vietnam Pro',sans-serif;font-size:12.5px;color:#1f1f1f;position:relative}
+  .mw-top{display:flex;align-items:center;gap:10px;padding:8px 12px 2px}
+  .mw-top .ic{width:20px;height:24px;border-radius:3px;background:#16a34a;flex:none}
+  .mw-top .ic.drive{background:linear-gradient(135deg,#1a73e8 33%,#fbbc04 33% 66%,#34a853 66%);border-radius:5px;height:20px}
+  .mw-top .fn{font-size:14.5px}
+  .mw-menu{display:flex;gap:2px;padding:0 8px 6px 40px;font-size:13px;position:relative}
+  .mw-menu span{padding:3px 7px;border-radius:4px;color:#3c4043}
+  .mw-menu span.on{background:#e8f0fe;color:#1a56db;font-weight:700}
+  .mw-dd{position:absolute;top:26px;background:#fff;border:1px solid #dadce0;border-radius:6px;box-shadow:0 6px 18px rgba(0,0,0,.18);padding:6px 0;min-width:270px;z-index:2}
+  .mw-dd div{padding:8px 16px;font-size:13px;white-space:nowrap}
+  .mw-dd div.sel{background:#e8f0fe;outline:2px solid #ea580c;outline-offset:-2px;font-weight:700}
+  .mw-fx{display:flex;align-items:center;border-top:1px solid #e3e3e3;border-bottom:1px solid #e3e3e3;background:#f9fbfd;padding:4px 10px;gap:10px;color:#5f6368}
+  .mw-fx b{font-weight:400;border-right:1px solid #dadce0;padding-right:10px;min-width:30px}
+  .mw-grid{overflow-x:auto}
+  .mw-grid table{border-collapse:collapse;min-width:100%}
+  .mw-grid td,.mw-grid th{border:1px solid #e2e3e3;padding:4px 8px;height:24px;white-space:nowrap}
+  .mw-grid th{background:#f8f9fa;color:#5f6368;font-weight:400;text-align:center;min-width:26px}
+  .mw-grid td.h{font-weight:700;background:#fdfdfd}
+  .mw-grid td.title{font-weight:700;font-size:13.5px}
+  .mw-grid .col-on{background:#fff7ed}
+  .mw-grid td.type{outline:2px solid #1a73e8;outline-offset:-2px;background:#fff}
+  .mw-grid td.new{background:#ecfdf5}
+  .mw-grid a,.mw-grid .lk{color:#1a73e8;text-decoration:underline}
+  .mw-grid td.dim{color:#9aa0a6}
+  .mw-toast{position:absolute;right:14px;bottom:12px;background:#323232;color:#fff;border-radius:6px;padding:10px 14px;font-size:12.5px;box-shadow:0 6px 16px rgba(0,0,0,.3);max-width:320px;line-height:1.45}
+  .mw-tabs{display:flex;gap:4px;padding:6px 10px;background:#f8f9fa;border-top:1px solid #e3e3e3;font-size:12.5px}
+  .mw-tabs span{padding:4px 12px;border-radius:4px;color:#5f6368}
+  .mw-tabs span.on{background:#e8f0fe;color:#1a56db;font-weight:700}
+  .mw-files{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;padding:12px}
+  .mw-files div{border:1px solid #dadce0;border-radius:8px;padding:10px 12px;display:flex;gap:8px;align-items:center;font-size:13px}
+  .mw-files div::before{content:"";width:14px;height:17px;border-radius:2px;background:#16a34a;flex:none}
+  .mw-files div.new{border-color:#16a34a;background:#f0fdf4;font-weight:700}
+  .mock-badge{position:absolute;top:8px;right:10px;font-size:10.5px;font-weight:700;color:#94a3b8;letter-spacing:.04em}
+
+  @media (max-width:900px){
+    #guide{grid-template-columns:1fr}
+    .g-toc{position:static}
+    .g-links{grid-template-columns:1fr}
+  }
 </style>
 </head>
 <body>
@@ -136,6 +228,212 @@
       </section>
     </aside>
   </div>
+</div>
+
+<!-- ============================ TRANG HƯỚNG DẪN VẬN HÀNH ============================
+     Mở bằng địa chỉ <file>.html#huong-dan (node Google Sheets trên sơ đồ mở trang này ở tab mới) -->
+<div id="guide">
+  <nav class="g-toc">
+    <a class="g-back" href="#">← Quay lại sơ đồ</a>
+    <ol>
+      <li><a href="#g-tong-quan">Tổng quan</a></li>
+      <li><a href="#g-luong-1">Luồng 1 · Tạo file MCL cho KEYS mới</a></li>
+      <li><a href="#g-luong-2">Luồng 2 · Thêm dự án vào KEYS đã có</a></li>
+      <li><a href="#g-luong-3">Luồng 3 · Chỉ cập nhật dữ liệu</a></li>
+      <li><a href="#g-mcl">Làm việc trên file MCL</a></li>
+      <li><a href="#g-khong">Những điều không nên làm</a></li>
+      <li><a href="#g-hoi">Câu hỏi thường gặp</a></li>
+    </ol>
+  </nav>
+
+  <main class="g-main">
+    <h1>Hướng dẫn vận hành file Detail_information &amp; MCL</h1>
+    <p class="lead">Dành cho người dùng thao tác hằng ngày: gán KEYS cho dự án, tạo file MCL và nạp dữ liệu. Mọi thao tác đều làm trên Google Trang tính qua menu <span class="ui">AMECC</span>, không cần đụng vào code.</p>
+
+    <div class="g-links">
+      <a class="g-link" target="_blank" rel="noopener" href="https://docs.google.com/spreadsheets/d/1INaZeZjV38jdxH-uimPSN4YoiABQvFkyYwfYTFLJhKs/edit?gid=0#gid=0">
+        <i style="background:#16a34a">▦</i><div><b>File Detail_information</b><span>Nơi gán KEYS và lấy link các file MCL</span></div><span class="arrow">↗</span></a>
+      <a class="g-link" target="_blank" rel="noopener" href="https://drive.google.com/drive/u/0/folders/1RbKCp1OW9oBLchcKUbbC-poA6K7i0eYt">
+        <i style="background:#1a73e8">▤</i><div><b>Thư mục Google Drive</b><span>Chứa các file MCL được tạo tự động</span></div><span class="arrow">↗</span></a>
+    </div>
+
+    <!-- TỔNG QUAN -->
+    <section class="g-sec" id="g-tong-quan">
+      <h2>Tổng quan<small>Một file Detail_information quản lý danh sách dự án, mỗi KEYS sinh ra một file MCL riêng.</small></h2>
+      <div class="flowline">
+        <span>Nhập KEYS MCL (cột D)</span><em>→</em>
+        <span class="hl">AMECC → Tạo link</span><em>→</em>
+        <span>File MCL_&lt;KEYS&gt; + link ở cột E</span><em>→</em>
+        <span class="hl">AMECC → Nạp dữ liệu</span><em>→</em>
+        <span>Dữ liệu vật tư trong file MCL</span>
+      </div>
+      <p><b>KEYS MCL</b> là mã nhóm do bạn tự đặt (ví dụ <code>1</code>, <code>2</code>). Các dự án có <b>cùng KEYS</b> sẽ dùng <b>chung một file MCL</b>. File được đặt tên <code>MCL_&lt;KEYS&gt;</code>, ví dụ <code>MCL_1</code>.</p>
+
+      <h3>Các cột trong sheet Detail_information</h3>
+      <p>Dòng 1–3 là tiêu đề, <b>dữ liệu bắt đầu từ dòng 4</b>.</p>
+      <table class="g-tbl">
+        <tr><th>Cột</th><th>Nội dung</th><th>Ai điền</th></tr>
+        <tr><td>A–C</td><td>No., Project, Project Name</td><td><span class="tag auto">Tự động từ hệ thống</span></td></tr>
+        <tr><td><b>D</b></td><td><b>KEYS MCL</b></td><td><span class="tag hand">Bạn nhập</span></td></tr>
+        <tr><td><b>E</b></td><td><b>LINK</b> – link file MCL</td><td><span class="tag script">Menu AMECC tự điền</span></td></tr>
+        <tr><td>F</td><td>Link folder tài liệu</td><td><span class="tag hand">Bạn nhập</span></td></tr>
+        <tr><td>G–S</td><td>Client, PO Sign, Contract No … Port Arrival</td><td><span class="tag auto">Tự động từ hệ thống</span></td></tr>
+        <tr><td>T–AA</td><td>Material Spec: Standard … Remark</td><td><span class="tag hand">Bạn nhập</span></td></tr>
+      </table>
+      <div class="note ok">Các cột bạn nhập (D, F, T–AA) luôn được giữ nguyên khi hệ thống cập nhật, kể cả khi bạn sắp xếp lại bảng. Dự án mới được thêm vào cuối bảng.</div>
+    </section>
+
+    <!-- LUỒNG 1 -->
+    <section class="g-sec" id="g-luong-1">
+      <h2>Luồng 1 · Tạo file MCL cho KEYS mới<small>Dùng khi có dự án chưa được gán vào file MCL nào.</small></h2>
+
+      <div class="step"><div class="num">1</div><div>
+        <h4>Nhập KEYS ở cột D</h4>
+        <p>Mở file <b>Detail_information</b>, tìm các dự án cần tạo MCL và gõ KEYS vào cột <b>D – KEYS MCL</b>. Dự án nào muốn chung file thì nhập cùng một KEYS. Để trống cột <b>E – LINK</b>.</p>
+        <figure class="mock"><div class="mw"><span class="mock-badge">ẢNH MINH HOẠ</span>
+          <div class="mw-top"><span class="ic"></span><span class="fn">Detail_information</span></div>
+          <div class="mw-menu"><span>Tệp</span><span>Chỉnh sửa</span><span>Xem</span><span>Chèn</span><span>Định dạng</span><span>Dữ liệu</span><span>Công cụ</span><span>Tiện ích</span><span>Trợ giúp</span><span>AMECC</span></div>
+          <div class="mw-fx"><b>D6</b>2</div>
+          <div class="mw-grid"><table>
+            <tr><th></th><th>A</th><th>B</th><th>C</th><th class="col-on">D</th><th>E</th><th>F</th></tr>
+            <tr><th>3</th><td class="h">No.</td><td class="h">Project</td><td class="h">Project Name</td><td class="h col-on">KEYS MCL</td><td class="h">LINK</td><td class="h">Link folder tài liệu</td></tr>
+            <tr><th>4</th><td>1</td><td>M302</td><td>Dự án A</td><td class="col-on">1</td><td></td><td></td></tr>
+            <tr><th>5</th><td>2</td><td>M323</td><td>Dự án B</td><td class="col-on">1</td><td></td><td></td></tr>
+            <tr><th>6</th><td>3</td><td>M304</td><td>Dự án C</td><td class="type">2</td><td></td><td></td></tr>
+            <tr><th>7</th><td>4</td><td>M310</td><td>Dự án D</td><td class="col-on"></td><td></td><td></td></tr>
+          </table></div>
+        </div><figcaption>M302 và M323 cùng KEYS 1 nên sẽ chung file MCL_1. M304 có KEYS 2 nên có file MCL_2 riêng.</figcaption></figure>
+      </div></div>
+
+      <div class="step"><div class="num">2</div><div>
+        <h4>Chọn AMECC → Tạo link cho KEYS chưa có link</h4>
+        <p>Trên thanh menu, bấm <span class="ui">AMECC</span> rồi chọn <span class="ui">Tạo link cho KEYS chưa có link</span>. Nếu chưa thấy menu AMECC, nhấn <span class="kbd">F5</span> và chờ vài giây.</p>
+        <figure class="mock"><div class="mw" style="height:200px"><span class="mock-badge">ẢNH MINH HOẠ</span>
+          <div class="mw-top"><span class="ic"></span><span class="fn">Detail_information</span></div>
+          <div class="mw-menu"><span>Tệp</span><span>Chỉnh sửa</span><span>Xem</span><span>Chèn</span><span>Định dạng</span><span>Dữ liệu</span><span>Công cụ</span><span>Tiện ích</span><span>Trợ giúp</span><span class="on" id="m-amecc-1">AMECC</span>
+            <div class="mw-dd" data-anchor="m-amecc-1"><div class="sel">Tạo link cho KEYS chưa có link</div><div>Nạp dữ liệu MCL (tất cả key)</div></div></div>
+          <div class="mw-fx"><b>D6</b>2</div>
+        </div><figcaption>Lần đầu sử dụng, Google có thể hiện hộp thoại xin quyền. Xem mục Câu hỏi thường gặp.</figcaption></figure>
+      </div></div>
+
+      <div class="step"><div class="num">3</div><div>
+        <h4>Kiểm tra link vừa tạo</h4>
+        <p>Chờ thông báo ở <b>góc dưới bên phải</b>. Sau đó cột <b>E – LINK</b> có link file MCL, các dòng cùng KEYS có cùng một link. Trong thư mục Drive xuất hiện file mới <code>MCL_1</code>, <code>MCL_2</code>.</p>
+        <figure class="mock"><div class="mw"><span class="mock-badge">ẢNH MINH HOẠ</span>
+          <div class="mw-top"><span class="ic"></span><span class="fn">Detail_information</span></div>
+          <div class="mw-grid"><table>
+            <tr><th></th><th>B</th><th>C</th><th>D</th><th class="col-on">E</th></tr>
+            <tr><th>3</th><td class="h">Project</td><td class="h">Project Name</td><td class="h">KEYS MCL</td><td class="h col-on">LINK</td></tr>
+            <tr><th>4</th><td>M302</td><td>Dự án A</td><td>1</td><td class="new"><span class="lk">MCL_1</span></td></tr>
+            <tr><th>5</th><td>M323</td><td>Dự án B</td><td>1</td><td class="new"><span class="lk">MCL_1</span></td></tr>
+            <tr><th>6</th><td>M304</td><td>Dự án C</td><td>2</td><td class="new"><span class="lk">MCL_2</span></td></tr>
+            <tr><th>7</th><td>M310</td><td>Dự án D</td><td></td><td></td></tr>
+            <tr><th>8</th><td></td><td></td><td></td><td></td></tr>
+          </table></div>
+          <div class="mw-toast">Đã tạo 2 file MCL mới, điền link cho 3 dòng.</div>
+        </div><figcaption>Câu chữ trong thông báo có thể khác đôi chút.</figcaption></figure>
+        <figure class="mock"><div class="mw"><span class="mock-badge">ẢNH MINH HOẠ</span>
+          <div class="mw-top"><span class="ic drive"></span><span class="fn">Google Drive › Thư mục MCL</span></div>
+          <div class="mw-files"><div class="new">MCL_1</div><div class="new">MCL_2</div></div>
+        </div><figcaption>File mới nằm trong thư mục Drive ở đầu trang.</figcaption></figure>
+      </div></div>
+
+      <div class="step"><div class="num">4</div><div>
+        <h4>Chọn AMECC → Nạp dữ liệu MCL (tất cả key)</h4>
+        <p>File MCL mới tạo chưa có dữ liệu. Bấm <span class="ui">AMECC</span> → <span class="ui">Nạp dữ liệu MCL (tất cả key)</span> để đổ dữ liệu vật tư vào các file, rồi chờ thông báo.</p>
+        <figure class="mock"><div class="mw" style="height:250px"><span class="mock-badge">ẢNH MINH HOẠ</span>
+          <div class="mw-top"><span class="ic"></span><span class="fn">Detail_information</span></div>
+          <div class="mw-menu"><span>Tệp</span><span>Chỉnh sửa</span><span>Xem</span><span>Chèn</span><span>Định dạng</span><span>Dữ liệu</span><span>Công cụ</span><span>Tiện ích</span><span>Trợ giúp</span><span class="on" id="m-amecc-2">AMECC</span>
+            <div class="mw-dd" data-anchor="m-amecc-2"><div>Tạo link cho KEYS chưa có link</div><div class="sel">Nạp dữ liệu MCL (tất cả key)</div></div></div>
+          <div class="mw-fx"><b>A1</b>PROJECT INFORMATION DETAIL</div>
+          <div class="mw-toast">Nạp MCL: 2 file, cập nhật 254 dòng, thêm mới 61 dòng. Bỏ qua 4 dòng trùng key (2 nhóm, xem tab MCL_Trung_Key).</div>
+        </div><figcaption>Thông báo cho biết số file, số dòng được cập nhật hoặc thêm mới, và số dòng bị bỏ qua do trùng.</figcaption></figure>
+      </div></div>
+
+      <div class="step"><div class="num">5</div><div>
+        <h4>Mở file MCL để kiểm tra</h4>
+        <p>Bấm link ở cột <b>E</b>. Trong file MCL, ô <b>D2</b> liệt kê các mã dự án thuộc KEYS đó, <b>dữ liệu bắt đầu từ dòng 6</b>.</p>
+        <figure class="mock"><div class="mw"><span class="mock-badge">ẢNH MINH HOẠ</span>
+          <div class="mw-top"><span class="ic"></span><span class="fn">MCL_1</span></div>
+          <div class="mw-grid"><table>
+            <tr><th></th><th>A</th><th>B</th><th>C</th><th class="col-on">D</th><th>E</th><th>…</th></tr>
+            <tr><th>1</th><td class="title" colspan="6">MATERIAL CONTROL LIST</td></tr>
+            <tr><th>2</th><td></td><td></td><td class="h">Mã dự án</td><td class="type">M302, M323</td><td></td><td></td></tr>
+            <tr><th>3</th><td class="dim">1</td><td class="dim">2</td><td class="dim">3</td><td class="dim">4</td><td class="dim">5</td><td class="dim">…</td></tr>
+            <tr><th>4</th><td class="h" colspan="6">Nhóm cột</td></tr>
+            <tr><th>5</th><td class="h">No.</td><td class="h">Project_No.</td><td class="h">MPR No.</td><td class="h">Description</td><td class="h">Size</td><td class="h">…</td></tr>
+            <tr><th>6</th><td>1</td><td>M302</td><td>MPR-001</td><td>Thép tấm</td><td>12x2000</td><td>…</td></tr>
+            <tr><th>7</th><td>2</td><td>M323</td><td>MPR-014</td><td>Thép hình</td><td>H300</td><td>…</td></tr>
+          </table></div>
+        </div><figcaption>Số liệu trong ảnh chỉ để minh hoạ bố cục.</figcaption></figure>
+      </div></div>
+    </section>
+
+    <!-- LUỒNG 2 -->
+    <section class="g-sec" id="g-luong-2">
+      <h2>Luồng 2 · Thêm dự án vào KEYS đã có<small>Dùng khi một dự án mới cần đưa vào file MCL đang dùng.</small></h2>
+      <div class="flowline"><span>Nhập KEYS cũ ở cột D</span><em>→</em><span class="hl">AMECC → Tạo link</span><em>→</em><span class="hl">AMECC → Nạp dữ liệu</span></div>
+      <ul>
+        <li>Nhập <b>KEYS đã có</b> (ví dụ <code>1</code>) vào cột D của dự án mới.</li>
+        <li>Chọn <span class="ui">AMECC</span> → <span class="ui">Tạo link cho KEYS chưa có link</span>. Hệ thống <b>không tạo file mới</b>, chỉ điền link file cũ vào dòng đó và cập nhật danh sách mã dự án ở ô <b>D2</b> của file MCL.</li>
+        <li>Chọn <span class="ui">AMECC</span> → <span class="ui">Nạp dữ liệu MCL (tất cả key)</span> để thêm dữ liệu của dự án mới vào file.</li>
+      </ul>
+      <div class="note">Muốn chuyển một dự án sang KEYS khác: sửa KEYS ở cột D, <b>xoá ô LINK (cột E) của dòng đó</b>, rồi làm lại 2 bước menu như trên.</div>
+    </section>
+
+    <!-- LUỒNG 3 -->
+    <section class="g-sec" id="g-luong-3">
+      <h2>Luồng 3 · Chỉ cập nhật dữ liệu<small>KEYS không thay đổi, chỉ cần lấy dữ liệu mới nhất vào các file MCL.</small></h2>
+      <div class="flowline"><span class="hl">AMECC → Nạp dữ liệu MCL (tất cả key)</span></div>
+      <p>Chọn <span class="ui">AMECC</span> → <span class="ui">Nạp dữ liệu MCL (tất cả key)</span>. Mọi file MCL được cập nhật cùng lúc: dòng đã có được cập nhật tại chỗ, dòng mới thêm vào cuối, cột bạn nhập tay giữ nguyên.</p>
+      <div class="note">Lịch <b>tự động cập nhật định kỳ</b> cho Detail_information và các file MCL <b>đang được triển khai</b>. Khi hoàn tất, bạn không cần bấm nạp dữ liệu nữa, trừ khi muốn lấy dữ liệu ngay lập tức.</div>
+    </section>
+
+    <!-- LÀM VIỆC TRÊN MCL -->
+    <section class="g-sec" id="g-mcl">
+      <h2>Làm việc trên file MCL</h2>
+      <ul>
+        <li><b>Cột lấy từ hệ thống</b> sẽ được ghi lại mỗi lần nạp dữ liệu. Nếu sửa tay, giá trị của bạn sẽ bị thay bằng dữ liệu hệ thống.</li>
+        <li><b>Cột nhập tay</b> luôn được giữ nguyên và đi theo đúng dòng của nó.</li>
+        <li>Cột <b>Q'ty Must Order</b> là công thức, đừng gõ đè số vào.</li>
+        <li><b>Sắp xếp:</b> phải <b>chọn cả bảng</b> rồi mới sắp xếp. Sắp xếp riêng vài cột sẽ làm lệch dữ liệu nhập tay.</li>
+        <li><b>Lọc:</b> nên dùng <span class="ui">Dữ liệu → Tạo chế độ xem bộ lọc</span>. Cách này không ảnh hưởng tới người khác đang xem file.</li>
+        <li>Không xoá cột khoá ẩn ở cuối bảng. Đây là cột hệ thống dùng để nhận ra từng dòng.</li>
+        <li>Dòng bị xoá tay sẽ được thêm lại ở cuối bảng trong lần nạp dữ liệu sau.</li>
+      </ul>
+      <h3>Dòng bị bỏ qua do trùng</h3>
+      <p>Nếu nhiều dòng vật tư trùng nhau (cùng Project, MPR No., No., Size và Net Weight), hệ thống <b>bỏ qua cả nhóm</b> để tránh ghi sai, và ghi lại vào tab <code>MCL_Trung_Key</code> trong file Detail_information. Bạn xem tab này sau mỗi lần nạp và báo người phụ trách nếu cần xử lý.</p>
+    </section>
+
+    <!-- KHÔNG NÊN -->
+    <section class="g-sec" id="g-khong">
+      <h2>Những điều không nên làm</h2>
+      <div class="note bad">
+        <ul style="margin:0">
+          <li>Đổi tên tab <code>Detail_information</code>, hoặc sửa / xoá tab <code>Key_Map</code>. Đây là sổ đăng ký KEYS và file MCL.</li>
+          <li>Tự gõ hoặc dán link vào cột <b>E – LINK</b>. Hãy để menu AMECC điền.</li>
+          <li>Xoá, đổi tên hoặc di chuyển file MCL ra khỏi thư mục Drive.</li>
+          <li>Chèn hoặc xoá cột trong Detail_information và các file MCL.</li>
+          <li>Bấm menu nhiều lần liên tiếp khi lần trước chưa báo xong.</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- HỎI ĐÁP -->
+    <section class="g-sec" id="g-hoi">
+      <h2>Câu hỏi thường gặp</h2>
+      <table class="g-tbl">
+        <tr><th style="width:38%">Tình huống</th><th>Cách xử lý</th></tr>
+        <tr><td>Không thấy menu <b>AMECC</b></td><td>Nhấn <span class="kbd">F5</span> và chờ vài giây sau khi trang tải xong.</td></tr>
+        <tr><td>Hiện hộp thoại <b>Cần được ủy quyền</b> khi bấm menu lần đầu</td><td>Bấm <span class="ui">Tiếp tục</span>, chọn tài khoản công ty, rồi bấm <span class="ui">Cho phép</span>. Nếu có cảnh báo "Google chưa xác minh ứng dụng này", bấm <span class="ui">Nâng cao</span> → <span class="ui">Chuyển đến AMECC_MCL</span> → <span class="ui">Cho phép</span>. Nếu không có quyền, liên hệ người phụ trách.</td></tr>
+        <tr><td>Bấm Tạo link nhưng cột E vẫn trống</td><td>Kiểm tra cột D đã có KEYS chưa và ô E có đang có sẵn nội dung không. Hệ thống chỉ điền cho dòng có KEYS và chưa có link.</td></tr>
+        <tr><td>File MCL có link nhưng không có dữ liệu</td><td>Chưa nạp dữ liệu: chọn <span class="ui">AMECC</span> → <span class="ui">Nạp dữ liệu MCL (tất cả key)</span>.</td></tr>
+        <tr><td>Số dòng trong MCL ít hơn dự kiến</td><td>Xem tab <code>MCL_Trung_Key</code>. Các nhóm dòng trùng bị bỏ qua sẽ được liệt kê ở đó.</td></tr>
+        <tr><td>Không mở được file hoặc thư mục</td><td>Tài khoản chưa được chia sẻ quyền. Liên hệ người phụ trách để được cấp quyền.</td></tr>
+      </table>
+    </section>
+    <div style="text-align:center;margin-top:8px"><a class="g-back g-back-btn" href="#">← Quay lại sơ đồ</a></div>
+  </main>
 </div>
 
 <!-- =====================================================================
@@ -199,8 +497,8 @@ const CONFIG = {
     manual:    {type:'pill', variant:'manual', lane:'mcl', x:440, y:190, w:140, h:38, label:'✎ Nhập thủ công',
                 info:['Nhập thủ công','Thông tin bổ sung do người dùng nhập tay, ghép cùng MPR.']},
     gsheet:    {type:'sheet', lane:'mcl', x:365, y:290, w:220, h:52, title:'Google Sheets', sub:'Sheet 1 + Sheet 2 + …',
-                url:'https://drive.google.com/drive/u/1/folders/1ScC4Om0L7BxcNAET1xst9H6KmyrWX5pQ',
-                info:['Google Sheets','Các file Google Sheets trung gian, gom MPR và dữ liệu nhập tay thành dữ liệu mới cho MCL.']},
+                url:'#huong-dan', urlLabel:'hướng dẫn vận hành',
+                info:['Google Sheets','File Detail_information và các file MCL. Bấm vào khối để xem trang hướng dẫn vận hành.']},
     mcl_past:  {type:'pill', variant:'past', lane:'mcl', x:203, y:400, w:136, h:38, label:'Dữ liệu quá khứ',
                 info:['Dữ liệu quá khứ – MCL','Dữ liệu lịch sử từ file Excel cũ, nạp một lần.']},
     mcl_new:   {type:'pill', variant:'new', lane:'mcl', x:365, y:400, w:136, h:38, label:'Dữ liệu mới',
@@ -213,7 +511,8 @@ const CONFIG = {
     detail_new:{type:'pill', variant:'new', lane:'detail', x:600, y:400, w:136, h:38, label:'Dữ liệu mới',
                 info:['Dữ liệu mới – Dự án','Lấy trực tiếp từ quy trình Quản lý dự án.']},
     t_detail:  {type:'table', lane:'detail', x:600, y:540, w:222, h:64, title:'Detail_information', code:'Detail_information_history',
-                info:['Detail_information','Thông tin chi tiết từng dự án; các bảng còn lại nối vào đây theo mã dự án.']},
+                url:'https://docs.google.com/spreadsheets/d/1INaZeZjV38jdxH-uimPSN4YoiABQvFkyYwfYTFLJhKs/edit?gid=0#gid=0',
+                info:['Detail_information','Thông tin chi tiết từng dự án; các bảng còn lại nối vào đây theo mã dự án. Link file MCL của từng nhóm dự án nằm ở cột LINK trong file này.']},
 
     svc_log:   {type:'service', lane:'logistic', x:880, y:286, w:212, h:108, kicker:'Phần mềm Service', title:'QT Logistics', id:'42428', dept:'Phòng Mua Hàng',
                 info:['Quy trình Logistics','Quy trình trên phần mềm Service (ID 42428). Theo dõi vận chuyển hàng về.']},
@@ -231,11 +530,11 @@ const CONFIG = {
     t_del:     {type:'table', lane:'delivery', x:1159, y:540, w:222, h:64, title:'Delivery', code:'Delivery_History',
                 info:['Delivery','Dữ liệu xuất hàng cho dự án. Gộp dữ liệu quá khứ và dữ liệu mới.']},
 
-    report:    {type:'report', lane:'all', x:721, y:740, w:560, h:150, title:'Báo cáo', sub:'Báo cáo tổng hợp quản trị mua sắm & dự án',
-                info:['Báo cáo tổng hợp','Báo cáo quản trị mua sắm & dự án, kết hợp cả 4 bảng dữ liệu.']},
+    report:    {type:'report', lane:'all', x:721, y:740, w:560, h:150, title:'Nhà kho dữ liệu BigQuery', sub:'kh-amecc · phong_mua_sam',
+                info:['Nhà kho dữ liệu BigQuery','Project kh-amecc, dataset phong_mua_sam. Nơi lưu 4 bảng dữ liệu, là nguồn cho báo cáo Raw và Dashboard.']},
 
     rpt_raw:   {type:'out', lane:'all', x:541, y:905, w:280, h:72, icon:'sheet', title:'Báo cáo Raw', sub:'Google Sheets',
-                url:'https://docs.google.com/spreadsheets/d/1TykAvsHf0XIGn-W7o3vjpqi-OgMMKya-Vh0Aq2GgCNc/edit?pli=1&gid=1484529016#gid=1484529016',
+                url:'https://docs.google.com/spreadsheets/d/1fzix3YUMvhzCOSyirrWua2fA_5_HKnRRybcbvlTjbbo/edit?gid=927975611#gid=927975611',
                 info:['Báo cáo Raw','Bảng dữ liệu thô trên Google Sheets.']},
     rpt_dash:  {type:'out', lane:'all', x:901, y:905, w:280, h:72, icon:'pbi', title:'Báo cáo Dashboard', sub:'Power BI',
                 url:'https://app.powerbi.com/groups/me/reports/02b46ddb-2f9d-4819-acb9-c734b301fd57/6a73fad09009304900b2?experience=power-bi&bookmarkGuid=e4f058bd2df9cb5423b8',
@@ -359,7 +658,7 @@ const CONFIG = {
     if (n.type==='service' && !n.url && C.serviceBaseUrl) n.url = C.serviceBaseUrl + n.id;
     if (!n.info) n.info = [n.title || n.label || '', ''];
     if (n.dept) n.info = [n.info[0], (n.info[1] ? n.info[1] + ' ' : '') + 'Phòng thực hiện: ' + n.dept + '.'];
-    if (n.url) n.info = [n.info[0], (n.info[1] ? n.info[1] + ' ' : '') + 'Bấm vào khối để mở link.'];
+    if (n.url && !/Bấm vào khối/.test(n.info[1])) n.info = [n.info[0], (n.info[1] ? n.info[1] + ' ' : '') + 'Bấm vào khối để mở link.'];
   });
   /* ---------- tự căn giữa nội dung trong khung tầng ----------
      Vùng nội dung nằm giữa mép phải dải nhãn tầng (x = -30) và mép phải khung tầng (x = width - 8).
@@ -503,7 +802,10 @@ const CONFIG = {
       el('circle', {cx:x+n.w-40, cy:y+30, r:70, fill:'none', stroke:'#fff', 'stroke-opacity':.06, 'stroke-width':18}, g);
       const t = el('text', {x:n.x+14, y:y+52, 'text-anchor':'middle', fill:'#fff', style:'font-size:27px;font-weight:800;letter-spacing:-.01em'}, g, n.title || 'Báo cáo');
       const tw = t.getBBox().width, ix = n.x+14 - tw/2 - 38, iy = y+30;
-      [[0,14],[9,8],[18,0]].forEach(([dx,dy],i)=>el('rect', {x:ix+dx, y:iy+dy, width:6, height:24-dy, rx:1.5, fill:'#6ee7b7', 'fill-opacity':.65+i*.15}, g));
+      { const cx = ix+12, cy = iy+4;   // biểu tượng kho dữ liệu
+        el('path', {d:`M${cx-11},${cy} v18 a11,4.5 0 0 0 22,0 v-18`, fill:'#6ee7b7', 'fill-opacity':.2, stroke:'#6ee7b7', 'stroke-width':1.8}, g);
+        el('path', {d:`M${cx-11},${cy+9} a11,4.5 0 0 0 22,0`, fill:'none', stroke:'#6ee7b7', 'stroke-width':1.8}, g);
+        el('ellipse', {cx, cy, rx:11, ry:4.5, fill:'#134e4a', stroke:'#6ee7b7', 'stroke-width':1.8}, g); }
       el('text', {x:n.x, y:y+80, 'text-anchor':'middle', fill:'#cfe7e1', style:'font-size:13.5px'}, g, n.sub || '');
       const chips = n.chips || [];
       const widths = chips.map(([t])=>t.length*6.8+32), gap = 10;
@@ -546,7 +848,7 @@ const CONFIG = {
   const LEG = [
     ['service','svc','Quy trình trên phần mềm'], ['pill-manual','manual','Dữ liệu nhập thủ công'],
     ['pill-new','new','Dữ liệu mới, cập nhật định kỳ'], ['pill-past','past','Dữ liệu quá khứ (Excel cũ)'],
-    ['table','table','Bảng dữ liệu đích'], ['report','report','Báo cáo tổng hợp'], ['out','out','Báo cáo đầu ra']
+    ['table','table','Bảng dữ liệu đích'], ['report','report','Nhà kho dữ liệu BigQuery'], ['out','out','Báo cáo đầu ra']
   ];
   const ul = document.getElementById('legend');
   LEG.filter(([t])=>types.has(t)).concat(anyLink ? [[null,'link','Bấm để mở link']] : []).forEach(([,cls,txt])=>{
@@ -605,7 +907,11 @@ const CONFIG = {
     infoText.textContent = 'Di chuột hoặc chạm vào một khối trên sơ đồ.';
     infoText.classList.add('hint');
   }
-  const openLink = k => { const u = nodes[k].url; if (u) window.open(u, '_blank', 'noopener'); };
+  const openLink = k => {
+    let u = nodes[k].url; if (!u) return;
+    if (u.startsWith('#')) { showView(u); return; }   // trang hướng dẫn nằm ngay trong file này, mở tại chỗ
+    window.open(u, '_blank', 'noopener');
+  };
   svg.querySelectorAll('.node').forEach(g=>{
     const k = g.getAttribute('data-key');
     g.addEventListener('mouseenter', ()=>show(k));
@@ -615,6 +921,47 @@ const CONFIG = {
     if (nodes[k].url){ g.setAttribute('role','link'); g.classList.add('linked'); }
   });
   svg.addEventListener('mouseleave', reset);
+
+
+  /* ---------- trang hướng dẫn: chuyển qua lại ngay trong trang ---------- */
+  let diagramScroll = 0;
+  function setGuide(on){
+    const was = document.body.classList.contains('guide-mode');
+    if (on && !was) diagramScroll = window.scrollY;
+    document.body.classList.toggle('guide-mode', on);
+    document.title = on ? 'Hướng dẫn vận hành – Detail_information & MCL' : C.title;
+    if (on){ placeMenus(); if (!was) window.scrollTo(0,0); }
+    else { reset(); window.scrollTo(0, diagramScroll); }
+  }
+  // đổi địa chỉ (để nút Back của trình duyệt cũng dùng được); nếu môi trường xem trước chặn thì vẫn chuyển trang bình thường
+  function showView(hash){
+    try { if (hash) history.pushState(null, '', hash); else history.pushState(null, '', location.pathname + location.search); } catch(e){}
+    setGuide(!!hash);
+  }
+  function routeView(){
+    const h = location.hash;
+    setGuide(h === '#huong-dan' || h.startsWith('#g-'));
+  }
+  // đặt menu xổ xuống của ảnh minh hoạ ngay dưới chữ AMECC
+  function placeMenus(){
+    document.querySelectorAll('.mw-dd[data-anchor]').forEach(dd=>{
+      const a = document.getElementById(dd.dataset.anchor);
+      if (!a) return;
+      const maxLeft = dd.parentElement.clientWidth - dd.offsetWidth - 8;   // không để menu bị cắt ở mép phải
+      dd.style.left = Math.max(0, Math.min(a.offsetLeft, maxLeft)) + 'px';
+    });
+  }
+  document.querySelectorAll('.g-back').forEach(b=>b.addEventListener('click', ev=>{ ev.preventDefault(); showView(''); }));
+  // mục lục: cuộn tới mục, không đổi địa chỉ
+  document.querySelectorAll('.g-toc ol a').forEach(a=>a.addEventListener('click', ev=>{
+    ev.preventDefault();
+    const t = document.querySelector(a.getAttribute('href'));
+    if (t) t.scrollIntoView({behavior:'smooth', block:'start'});
+  }));
+  window.addEventListener('popstate', routeView);
+  window.addEventListener('hashchange', routeView);
+  window.addEventListener('resize', ()=>{ if (document.body.classList.contains('guide-mode')) placeMenus(); });
+  routeView();
 
   window.__DIAGRAM = {CONFIG:C, LABEL_W};   // dùng cho scripts/check_diagram.py
 })();
